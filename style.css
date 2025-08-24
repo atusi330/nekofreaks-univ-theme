@@ -1,0 +1,968 @@
+/*
+Theme Name: ネコフリークス大学
+Theme URI: https://nekofreaks-university.com
+Author: ネコフリークス大学開発チーム
+Author URI: https://nekofreaks-university.com
+Description: 猫の論文要約と講座を提供する教育メディア「ネコフリークス大学」のオリジナルテーマ
+Version: 1.0.0
+License: GPL v2 or later
+Text Domain: nekofreaks-univ
+*/
+
+:root {
+  --primary: #4a5d7a;
+  --secondary: #f4a460;
+  --accent: #ff6b6b;
+  --bg-main: #fafaf8;
+  --bg-paper: #ffffff;
+  --bg-board: #2d3e50;
+  --maron: #8b4513;
+  --ichi: #ff8c00;
+  --hachi: #4682b4;
+  --jiji: #228b22;
+  --daifuku: #9370db;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.professor-maron { color: var(--maron); }
+.professor-ichi { color: var(--ichi); }
+.professor-hachi { color: var(--hachi); }
+.professor-jiji { color: var(--jiji); }
+.professor-daifuku { color: var(--daifuku); }
+
+/* 講師名の背景色 */
+.professor-maron-bg { background-color: var(--maron); }
+.professor-ichi-bg { background-color: var(--ichi); }
+.professor-hachi-bg { background-color: var(--hachi); }
+.professor-jiji-bg { background-color: var(--jiji); }
+.professor-daifuku-bg { background-color: var(--daifuku); }
+
+.loading-paw {
+  animation: paw-bounce 0.6s ease-in-out infinite;
+}
+
+@keyframes paw-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* 論文カード共通スタイル */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 1;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 2;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 3;
+}
+
+.paper-card {
+  position: relative;
+}
+
+.paper-card:hover {
+  transform: translateY(-4px);
+}
+
+.paper-card .paper-thumbnail img {
+  transition: transform 0.3s ease;
+}
+
+.paper-card:hover .paper-thumbnail img {
+  transform: scale(1.05);
+}
+
+/* モバイルメニュー */
+.mobile-menu {
+  transition: all 0.3s ease;
+  transform-origin: top;
+}
+
+/* PC表示用のスタイル */
+@media (min-width: 768px) {
+  .md\:h-12 {
+    height: 2.6rem;
+  }
+  .mobile-menu {
+    position: static !important;
+    width: auto !important;
+    margin-left: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    border-top: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    display: block !important;
+  }
+  
+  .mobile-menu ul {
+    padding: 10px 0 !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    max-width: 750px !important;
+    justify-content: flex-end !important;
+  }
+  
+  .mobile-menu li {
+    border-bottom: none !important;
+    margin: -5px 0 !important;
+    padding: 0 !important;
+  }
+  
+  .mobile-menu a {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 0.75rem 1rem !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+    color: #374151 !important;
+    text-decoration: none !important;
+    transition: background-color 0.2s ease !important;
+    min-height: auto !important;
+    border-radius: 0.375rem !important;
+    white-space: nowrap !important;
+    margin: 0.25rem !important;
+  }
+  
+  .mobile-menu a:hover {
+    background-color: #f3f4f6 !important;
+  }
+  
+  .mobile-menu a i {
+    margin-right: 0.5rem !important;
+    width: auto !important;
+    text-align: center !important;
+  }
+}
+
+/* モバイル表示用のスタイル */
+@media (max-width: 767px) {
+  .mobile-menu {
+    display: none;
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  
+  .mobile-menu.hidden {
+    display: none !important;
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  .mobile-menu:not(.hidden) {
+    display: block !important;
+    transform: scaleY(1);
+    opacity: 1;
+  }
+
+  .mobile-menu:not(.hidden) {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    border-top: 1px solid #e5e7eb;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+
+  .mobile-menu ul {
+    padding: 1.5rem;
+    max-width: 100%;
+  }
+
+  .mobile-menu li {
+    border-bottom: 1px solid #f3f4f6;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-menu li:last-child {
+    border-bottom: none;
+  }
+
+  .mobile-menu a {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+    font-weight: 500;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    color: #374151;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    min-height: 3rem;
+  }
+
+  .mobile-menu a i {
+    margin-right: 0.75rem;
+    width: 1.25rem;
+    text-align: center;
+  }
+
+  .mobile-menu a:hover {
+    color: #1f2937;
+    background-color: #f9fafb;
+    margin: 0 -1.5rem;
+    padding: 1rem 1.5rem;
+    transform: translateX(0.25rem);
+  }
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #374151;
+  transition: color 0.2s ease;
+}
+
+.menu-toggle:hover {
+  color: #1f2937;
+}
+
+.menu-toggle svg {
+  transition: transform 0.2s ease;
+}
+
+.menu-toggle[aria-expanded="true"] svg {
+  transform: rotate(90deg);
+}
+
+/* サイトロゴ */
+.site-title img {
+  transition: transform 0.2s ease;
+}
+
+.site-title img:hover {
+  transform: scale(1.05);
+}
+
+/* WordPress投稿コンテンツ用プロースタイル */
+.prose {
+  color: #374151;
+  max-width: none;
+}
+
+.prose p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  line-height: 1.75;
+}
+
+.prose h1 {
+  color: #111827;
+  font-weight: 800;
+  font-size: 2.25em;
+  margin-top: 0;
+  margin-bottom: 0.8888889em;
+  line-height: 1.1111111;
+}
+
+.prose h2 {
+  color: #111827;
+  font-weight: 700;
+  font-size: 1.5em;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  line-height: 1.3333333;
+}
+
+.prose h3 {
+  color: #111827;
+  font-weight: 600;
+  font-size: 1.25em;
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+  line-height: 1.6;
+}
+
+.prose h4, .prose h5, .prose h6 {
+  color: #111827;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.5;
+}
+
+.prose strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+.prose ul, .prose ol {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  padding-left: 1.625em;
+}
+
+.prose li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose ul > li {
+  position: relative;
+  padding-left: 0.375em;
+}
+
+.prose ul > li::before {
+  content: "";
+  position: absolute;
+  background-color: #d1d5db;
+  border-radius: 50%;
+  width: 0.375em;
+  height: 0.375em;
+  top: 0.6875em;
+  left: -1.25em;
+}
+
+.prose ol > li {
+  position: relative;
+  padding-left: 0.375em;
+}
+
+.prose ol > li::before {
+  content: counter(list-item, decimal) ".";
+  position: absolute;
+  font-weight: 400;
+  color: #6b7280;
+  left: -1.625em;
+}
+
+.prose blockquote {
+  font-weight: 500;
+  font-style: italic;
+  color: #111827;
+  border-left-width: 0.25rem;
+  border-left-color: #e5e7eb;
+  quotes: "\201C""\201D""\2018""\2019";
+  margin-top: 1.6em;
+  margin-bottom: 1.6em;
+  padding-left: 1em;
+}
+
+.prose blockquote p:first-of-type::before {
+  content: open-quote;
+}
+
+.prose blockquote p:last-of-type::after {
+  content: close-quote;
+}
+
+.prose code {
+  color: #111827;
+  font-weight: 600;
+  font-size: 0.875em;
+  background-color: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.prose pre {
+  color: #e5e7eb;
+  background-color: #374151;
+  overflow-x: auto;
+  font-size: 0.875em;
+  line-height: 1.7142857;
+  margin-top: 1.7142857em;
+  margin-bottom: 1.7142857em;
+  border-radius: 0.375rem;
+  padding: 0.8571429em 1.1428571em;
+}
+
+.prose pre code {
+  background-color: transparent;
+  border-width: 0;
+  border-radius: 0;
+  padding: 0;
+  font-weight: 400;
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+}
+
+.prose table {
+  width: 100%;
+  table-layout: auto;
+  text-align: left;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  font-size: 0.875em;
+  line-height: 1.7142857;
+}
+
+.prose thead {
+  color: #111827;
+  font-weight: 600;
+  border-bottom-width: 1px;
+  border-bottom-color: #d1d5db;
+}
+
+.prose thead th {
+  vertical-align: bottom;
+  padding-right: 0.5714286em;
+  padding-bottom: 0.5714286em;
+  padding-left: 0.5714286em;
+}
+
+.prose tbody tr {
+  border-bottom-width: 1px;
+  border-bottom-color: #e5e7eb;
+}
+
+.prose tbody td {
+  vertical-align: top;
+  padding: 0.5714286em;
+}
+
+.prose img {
+  margin-top: 2em;
+  margin-bottom: 2em;
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.prose figure {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+.prose figcaption {
+  color: #6b7280;
+  font-size: 0.875em;
+  line-height: 1.4285714;
+  margin-top: 0.8571429em;
+  text-align: center;
+}
+
+.prose a {
+  color: #3b82f6;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.prose a:hover {
+  color: #1d4ed8;
+}
+
+.prose hr {
+  border-color: #e5e7eb;
+  border-top-width: 1px;
+  margin-top: 3em;
+  margin-bottom: 3em;
+}
+
+/* 講座専用のproseスタイル調整 */
+.prose.episode-content {
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+
+.prose.episode-content p {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+.prose.episode-content h2 {
+  color: #1f2937;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5em;
+  margin-top: 2.5em;
+  margin-bottom: 1.5em;
+}
+
+.prose.episode-content h3 {
+  color: #374151;
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+
+/* 猫らしいアクセント */
+.prose.episode-content blockquote {
+  border-left-color: #ff6b6b;
+  background-color: #fef7f7;
+  padding: 1em 1.5em;
+  border-radius: 0.5rem;
+  position: relative;
+}
+
+.prose.episode-content blockquote::before {
+  content: "🐾";
+  position: absolute;
+  top: -0.5em;
+  left: 1em;
+  background-color: #fef7f7;
+  padding: 0 0.5em;
+  font-size: 1.5em;
+}
+
+/* 講師フィルターボタンのカラー */
+.professor-filter-button {
+  font-weight: 600;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+/* マロン学長 - サンディブラウン */
+.professor-filter-button.professor-maron {
+  background-color: #fef3e2;
+  color: #8b4513;
+  border-color: #8b4513;
+}
+
+.professor-filter-button.professor-maron:hover {
+  background-color: #8b4513;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.professor-filter-button.professor-maron.active {
+  background-color: #8b4513;
+  color: white;
+  box-shadow: 0 4px 8px rgba(139, 69, 19, 0.3);
+}
+
+/* いち教授 - ダークオレンジ */
+.professor-filter-button.professor-ichi {
+  background-color: #fff4e6;
+  color: #ff8c00;
+  border-color: #ff8c00;
+}
+
+.professor-filter-button.professor-ichi:hover {
+  background-color: #ff8c00;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.professor-filter-button.professor-ichi.active {
+  background-color: #ff8c00;
+  color: white;
+  box-shadow: 0 4px 8px rgba(255, 140, 0, 0.3);
+}
+
+/* はち助教授 - スチールブルー */
+.professor-filter-button.professor-hachi {
+  background-color: #e6f2ff;
+  color: #4682b4;
+  border-color: #4682b4;
+}
+
+.professor-filter-button.professor-hachi:hover {
+  background-color: #4682b4;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.professor-filter-button.professor-hachi.active {
+  background-color: #4682b4;
+  color: white;
+  box-shadow: 0 4px 8px rgba(70, 130, 180, 0.3);
+}
+
+/* ジジ助手 - フォレストグリーン */
+.professor-filter-button.professor-jiji {
+  background-color: #e8f5e8;
+  color: #228b22;
+  border-color: #228b22;
+}
+
+.professor-filter-button.professor-jiji:hover {
+  background-color: #228b22;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.professor-filter-button.professor-jiji.active {
+  background-color: #228b22;
+  color: white;
+  box-shadow: 0 4px 8px rgba(34, 139, 34, 0.3);
+}
+
+/* 大福先代学長 - ミディアムパープル */
+.professor-filter-button.professor-daifuku {
+  background-color: #f3e8ff;
+  color: #9370db;
+  border-color: #9370db;
+}
+
+.professor-filter-button.professor-daifuku:hover {
+  background-color: #9370db;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.professor-filter-button.professor-daifuku.active {
+  background-color: #9370db;
+  color: white;
+  box-shadow: 0 4px 8px rgba(147, 112, 219, 0.3);
+}
+
+/* 肉球アイコンのアニメーション */
+.professor-filter-button i.fa-paw {
+  transition: transform 0.3s ease;
+}
+
+.professor-filter-button:hover i.fa-paw {
+  transform: rotate(15deg) scale(1.2);
+}
+
+.professor-filter-button.active i.fa-paw {
+  animation: paw-stamp 0.3s ease-out;
+}
+
+@keyframes paw-stamp {
+  0% {
+    transform: scale(1) rotate(0);
+  }
+  50% {
+    transform: scale(1.5) rotate(-10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+/* ブックマーク・シェア機能のアニメーション */
+.animate-bounce {
+  animation: bounce 0.5s ease-in-out;
+}
+
+.animate-pulse {
+  animation: pulse 1s ease-in-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.3s ease-in;
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -8px, 0);
+  }
+  70% {
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* 通知スタイル */
+.notification {
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+  max-width: 300px;
+}
+
+/* モーダルスタイル */
+#share-modal, #bookmarks-modal {
+  backdrop-filter: blur(4px);
+}
+
+#share-modal input:focus, #bookmarks-modal input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* エピソード完了機能のスタイル */
+.episode-complete-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.episode-complete-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.episode-complete-button:hover::before {
+  left: 100%;
+}
+
+.episode-complete-button:disabled {
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* 完了時のアニメーション */
+.completion-rewards {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 講座完了モーダル */
+#lecture-completion-modal .animate-bounce {
+  animation: modalBounce 0.6s ease-out;
+}
+
+@keyframes modalBounce {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 進捗バーのアニメーション改善 */
+.progress-fill {
+  transition: width 1s ease-in-out;
+}
+
+/* 完了バッジのアニメーション */
+.completion-badge {
+  animation: badgeAppear 0.5s ease-out;
+}
+
+@keyframes badgeAppear {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 肉球スタンプエフェクト */
+.paw-stamp-effect {
+  position: relative;
+}
+
+.paw-stamp-effect::after {
+  content: '🐾';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  animation: pawStamp 1s ease-out;
+  pointer-events: none;
+}
+
+@keyframes pawStamp {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(-45deg);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+/* 完了講座セクションのスタイル */
+.completed-lecture-item {
+  border: 1px solid #e5e7eb;
+  position: relative;
+}
+
+.completed-lecture-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #fbbf24, #f59e0b);
+  border-radius: 0 2px 2px 0;
+}
+
+.completed-lecture-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+/* さらに読み込むボタンのスタイル */
+.load-more-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.load-more-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.5s;
+}
+
+.load-more-btn:hover::before {
+  left: 100%;
+}
+
+.load-more-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 完了講座のアニメーション */
+.completed-lecture-item {
+  animation: fadeInSlideUp 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes fadeInSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 空の状態のスタイル改善 */
+#empty-completed {
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+}
+
+/* トロフィーアイコンのアニメーション */
+.fa-trophy {
+  animation: trophyShine 2s ease-in-out infinite;
+}
+
+@keyframes trophyShine {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+/* 講師紹介セクション */
+.professors-section h2.text-4xl::after {
+  background: linear-gradient(to right, #8b5cf6, #ec4899);
+}
+
+.professor-card {
+  transition: all 0.3s ease;
+}
+
+.professor-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.professor-image-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.professor-image-section img {
+  transition: transform 0.3s ease;
+}
+
+.professor-card:hover .professor-image-section img {
+  transform: scale(1.05);
+}
+
+.professor-info-section {
+  position: relative;
+}
