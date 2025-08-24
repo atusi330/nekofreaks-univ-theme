@@ -85,3 +85,10 @@ gulpfile.js
 # Local development
 local-config.php
 wp-config-local.php
+
+# Development documentation and test files
+CLAUDE*.md
+JSON_SAMPLE.md
+test-*.php
+debug-*.php
+example-*.json
