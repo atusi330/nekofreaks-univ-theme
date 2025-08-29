@@ -30,30 +30,21 @@
         </div>
         
         <!-- 担当 -->
-        <?php if ( isset($professor['specialty']) && $professor['specialty'] ) : ?>
+        <?php if ( isset($professor['responsibility']) && $professor['responsibility'] ) : ?>
             <div class="mb-3">
                 <p class="text-sm text-gray-600">
                     <span class="font-semibold">担当：</span>
-                    <?php echo esc_html($professor['specialty']); ?>
+                    <?php echo esc_html($professor['responsibility']); ?>
                 </p>
             </div>
         <?php endif; ?>
         
         <!-- 年齢/性別 -->
-        <?php if ( (isset($professor['age']) && $professor['age']) || (isset($professor['gender']) && $professor['gender']) ) : ?>
+        <?php if ( isset($professor['sex_age']) && $professor['sex_age'] ) : ?>
             <div class="mb-3">
                 <p class="text-sm text-gray-600">
                     <span class="font-semibold">年齢/性別：</span>
-                    <?php 
-                    $age_gender = array();
-                    if (isset($professor['age']) && $professor['age']) {
-                        $age_gender[] = $professor['age'] . '歳';
-                    }
-                    if (isset($professor['gender']) && $professor['gender']) {
-                        $age_gender[] = $professor['gender'];
-                    }
-                    echo esc_html(implode(' / ', $age_gender));
-                    ?>
+                    <?php echo esc_html($professor['sex_age']); ?>
                 </p>
             </div>
         <?php endif; ?>
@@ -69,21 +60,21 @@
         <?php endif; ?>
         
         <!-- 毛色 -->
-        <?php if ( isset($professor['color']) && $professor['color'] ) : ?>
+        <?php if ( isset($professor['color_type']) && $professor['color_type'] ) : ?>
             <div class="mb-3">
                 <p class="text-sm text-gray-600">
                     <span class="font-semibold">毛色：</span>
-                    <?php echo esc_html($professor['color']); ?>
+                    <?php echo esc_html($professor['color_type']); ?>
                 </p>
             </div>
         <?php endif; ?>
         
         <!-- 性格 -->
-        <?php if ( isset($professor['description']) && $professor['description'] ) : ?>
+        <?php if ( isset($professor['personality']) && $professor['personality'] ) : ?>
             <div class="mb-4">
                 <p class="text-sm text-gray-600">
                     <span class="font-semibold">性格：</span>
-                    <?php echo esc_html($professor['description']); ?>
+                    <?php echo esc_html($professor['personality']); ?>
                 </p>
             </div>
         <?php endif; ?>
