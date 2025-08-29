@@ -22,11 +22,13 @@ if ($parent_lecture) {
     $lecture_url = get_permalink($parent_lecture);
     $main_professor = nfu_get_field('main_professor', $parent_lecture);
     $total_episodes = nfu_get_field('total_episodes', $parent_lecture) ?: 5;
+    $related_paper = nfu_get_field('related_paper', $parent_lecture);
 } else {
     $lecture_title = '';
     $lecture_url = '#';
     $main_professor = 'maron';
     $total_episodes = 5;
+    $related_paper = null;
 }
 
 // 講師情報の取得
@@ -671,6 +673,64 @@ if ($key_points) {
                         <?php endif; ?>
                     </div>
                 </div>
+                
+                <!-- 参考論文 -->
+                <?php if ($related_paper) : ?>
+                    <div class="related-paper bg-white rounded-lg shadow-md p-6">
+                        <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-file-alt text-green-600 mr-2"></i>
+                            参考論文
+                        </h3>
+                        
+                        <div class="paper-card border border-gray-200 rounded-lg p-4">
+                            <h4 class="font-semibold text-sm mb-2">
+                                <a href="<?php echo get_permalink($related_paper->ID); ?>" class="text-green-600 hover:text-green-800 transition-colors">
+                                    <?php echo esc_html($related_paper->post_title); ?>
+                                </a>
+                            </h4>
+                            
+                            <?php 
+                            $authors = nfu_get_field('authors', $related_paper->ID);
+                            $published_year = nfu_get_field('published_year', $related_paper->ID);
+                            $journal = nfu_get_field('journal', $related_paper->ID);
+                            ?>
+                            
+                            <?php if ($authors || $published_year || $journal) : ?>
+                                <div class="paper-meta text-xs text-gray-500 space-y-1 mb-3">
+                                    <?php if ($authors) : ?>
+                                        <div class="authors">
+                                            <i class="fas fa-user-edit mr-1"></i>
+                                            <?php echo esc_html($authors); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($published_year) : ?>
+                                        <div class="year">
+                                            <i class="fas fa-calendar mr-1"></i>
+                                            <?php echo esc_html($published_year); ?>年
+                                        </div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($journal) : ?>
+                                        <div class="journal">
+                                            <i class="fas fa-book mr-1"></i>
+                                            <?php echo esc_html($journal); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <div class="paper-excerpt text-xs text-gray-600 mb-3">
+                                <?php echo wp_trim_words($related_paper->post_excerpt ?: $related_paper->post_content, 20, '...'); ?>
+                            </div>
+                            
+                            <a href="<?php echo get_permalink($related_paper->ID); ?>" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors text-sm">
+                                <i class="fas fa-external-link-alt mr-1"></i>
+                                論文要約を読む
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
                 
                 <!-- エピソード一覧 -->
                 <div class="episodes-list bg-white rounded-lg shadow-md p-6">
