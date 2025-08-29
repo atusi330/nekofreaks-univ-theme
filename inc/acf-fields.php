@@ -392,7 +392,8 @@ function nfu_register_acf_field_groups() {
             ),
             array(
                 'key' => 'field_professor_description',
-                'label' => '講師紹介',
+                'instructions' => '講師の性格や特徴を入力してください',
+                'label' => '性格',
                 'name' => 'professor_description',
                 'type' => 'textarea',
                 'rows' => 4,
@@ -435,10 +436,10 @@ function nfu_register_acf_field_groups() {
             ),
             array(
                 'key' => 'field_professor_color',
-                'label' => 'テーマカラー',
+                'instructions' => '例：レッドタビー、黒、白黒ハチワレなど',
+                'label' => '毛色',
                 'name' => 'professor_color',
-                'type' => 'color_picker',
-                'default_value' => '#8B4513',
+                'type' => 'text',
             ),
             array(
                 'key' => 'field_professor_image',
