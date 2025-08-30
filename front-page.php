@@ -286,52 +286,9 @@ get_header(); ?>
             
             if ( $available_lectures->have_posts() ) : ?>
                 <!-- 講座グリッド -->
-                <div class="lecture-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-none lg:max-w-5xl lg:mx-auto">
-                    <?php while ( $available_lectures->have_posts() ) : $available_lectures->the_post(); 
-                        $professor = nfu_get_field( 'main_professor' );
-                        $total_episodes = nfu_get_field( 'total_episodes' ) ?: 5;
-                        $difficulty = get_the_terms( get_the_ID(), 'difficulty' );
-                        $difficulty_label = $difficulty && !is_wp_error($difficulty) ? $difficulty[0]->name : '初級';
-                        
-                        // 講師別カラー
-                        $professor_colors = array(
-                            'maron' => 'from-yellow-500 to-yellow-600',
-                            'ichi' => 'from-orange-500 to-orange-600',
-                            'hachi' => 'from-blue-500 to-blue-600',
-                            'jiji' => 'from-green-500 to-green-600',
-                            'daifuku' => 'from-purple-500 to-purple-600'
-                        );
-                        $spine_color = isset($professor_colors[$professor]) ? $professor_colors[$professor] : 'from-gray-500 to-gray-600';
-                    ?>
-                        <!-- 講座カード（本の表紙風） -->
-                        <article class="lecture-book-card transform hover:-translate-y-2 transition-transform">
-                            <div class="book-cover bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
-                                <!-- 表紙デザイン（背表紙） -->
-                                <div class="book-spine bg-gradient-to-r <?php echo $spine_color; ?> h-2"></div>
-                                
-                                <div class="p-6">
-                                    <!-- 講座情報 -->
-                                    <span class="<?php echo nfu_get_professor_class( $professor ); ?> text-sm font-semibold">
-                                        <?php echo nfu_get_professor_name( $professor ); ?>
-                                    </span>
-                                    <h3 class="text-xl font-bold mt-2 mb-2">
-                                        <a href="<?php the_permalink(); ?>" class="text-gray-800 hover:text-blue-600 transition-colors">
-                                            <?php the_title(); ?>
-                                        </a>
-                                    </h3>
-                                    <p class="text-gray-600 text-sm mb-4">
-                                        <?php echo wp_trim_words( get_the_excerpt(), 20 ); ?>
-                                    </p>
-                                    
-                                    <!-- メタ情報 -->
-                                    <div class="flex items-center gap-4 text-sm text-gray-500">
-                                        <span><i class="fas fa-graduation-cap mr-1"></i>全<?php echo $total_episodes; ?>回</span>
-                                        <span><i class="fas fa-chart-bar mr-1"></i><?php echo $difficulty_label; ?></span>
-                                        <span><i class="fas fa-users mr-1"></i><?php echo rand(100, 999); ?>名</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
+                <div class="lecture-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <?php while ( $available_lectures->have_posts() ) : $available_lectures->the_post(); ?>
+                        <?php get_template_part( 'template-parts/content', 'lecture-card' ); ?>
                     <?php endwhile; ?>
                 </div>
                 
