@@ -120,55 +120,75 @@ get_header(); ?>
                     </h3>
                     
                     <div class="space-y-4">
-                        <div class="flex items-center p-3 rounded-lg bg-orange-50">
-                            <div class="w-12 h-12 bg-orange-200 rounded-full flex items-center justify-center mr-3">
-                                <span class="text-xl">🐱</span>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-orange-700">マロン学長</h4>
-                                <p class="text-xs text-gray-600">全講座ナビゲーター</p>
-                            </div>
-                        </div>
+                        <?php
+                        // 講師データを取得
+                        $professors = nfu_get_professors();
                         
-                        <div class="flex items-center p-3 rounded-lg bg-orange-50">
-                            <div class="w-12 h-12 bg-orange-300 rounded-full flex items-center justify-center mr-3">
-                                <i class="fas fa-cat text-orange-700"></i>
+                        if ($professors) :
+                            foreach ($professors as $professor) :
+                                // 講師IDに基づいて背景色を設定
+                                $bg_color_class = 'bg-gray-50';
+                                $text_color_class = 'text-gray-700';
+                                
+                                switch ($professor['professor_id']) {
+                                    case 'maron':
+                                        $bg_color_class = 'bg-orange-50';
+                                        $text_color_class = 'text-orange-700';
+                                        break;
+                                    case 'ichi':
+                                        $bg_color_class = 'bg-orange-50';
+                                        $text_color_class = 'text-orange-700';
+                                        break;
+                                    case 'hachi':
+                                        $bg_color_class = 'bg-blue-50';
+                                        $text_color_class = 'text-blue-700';
+                                        break;
+                                    case 'jiji':
+                                        $bg_color_class = 'bg-green-50';
+                                        $text_color_class = 'text-green-700';
+                                        break;
+                                    case 'daifuku':
+                                        $bg_color_class = 'bg-purple-50';
+                                        $text_color_class = 'text-purple-700';
+                                        break;
+                                }
+                        ?>
+                            <a href="<?php echo esc_url($professor['url']); ?>" 
+                               class="block hover:shadow-md transition-shadow">
+                                <div class="flex items-center p-3 rounded-lg <?php echo $bg_color_class; ?> hover:bg-opacity-80 transition-colors">
+                                    <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-3 border-2 border-white shadow-sm">
+                                        <?php if (isset($professor['image']) && $professor['image']) : ?>
+                                            <img src="<?php echo esc_url($professor['image']); ?>" 
+                                                 alt="<?php echo esc_attr($professor['name']); ?>" 
+                                                 class="w-full h-full object-cover">
+                                        <?php else : ?>
+                                            <div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                                                <i class="fas fa-cat text-gray-400"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="font-semibold <?php echo $text_color_class; ?> truncate">
+                                            <?php echo esc_html($professor['name']); ?>
+                                        </h4>
+                                        <p class="text-xs text-gray-600 truncate">
+                                            <?php echo esc_html(isset($professor['responsibility']) ? $professor['responsibility'] : ''); ?>
+                                        </p>
+                                    </div>
+                                    <div class="ml-2">
+                                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        <?php 
+                            endforeach;
+                        else :
+                        ?>
+                            <div class="text-center text-gray-500 py-4">
+                                <i class="fas fa-cat text-2xl mb-2"></i>
+                                <p class="text-sm">講師情報を読み込み中...</p>
                             </div>
-                            <div>
-                                <h4 class="font-semibold text-orange-700">いち教授</h4>
-                                <p class="text-xs text-gray-600">行動・観察担当</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center p-3 rounded-lg bg-blue-50">
-                            <div class="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center mr-3">
-                                <i class="fas fa-paw text-blue-700"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-blue-700">はち助教授</h4>
-                                <p class="text-xs text-gray-600">環境・美意識担当</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center p-3 rounded-lg bg-green-50">
-                            <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center mr-3">
-                                <i class="fas fa-cat text-green-700"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-green-700">ジジ助手</h4>
-                                <p class="text-xs text-gray-600">問題行動担当</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center p-3 rounded-lg bg-purple-50">
-                            <div class="w-12 h-12 bg-purple-200 rounded-full flex items-center justify-center mr-3">
-                                <span class="text-xl">🐱</span>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-purple-700">大福先代学長</h4>
-                                <p class="text-xs text-gray-600">繊細ケア担当</p>
-                            </div>
-                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
