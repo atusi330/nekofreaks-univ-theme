@@ -106,19 +106,32 @@ function nfu_character_dialogue( $character, $message, $position = 'left' ) {
     $alignment = $position === 'right' ? 'flex-row-reverse' : 'flex-row';
     
     ?>
-    <div class="character-dialogue flex <?php echo $alignment; ?> items-start mb-6">
-        <div class="character-icon flex-shrink-0 w-16 h-16 rounded-full bg-white shadow-md flex items-center justify-center">
-            <span class="text-3xl"><?php echo $char['icon']; ?></span>
+    <div class="character-dialogue flex <?php echo $alignment; ?> items-start">
+        <div class="character-icon flex-shrink-0 w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center <?php echo $position === 'right' ? 'ml-4' : 'mr-4'; ?> overflow-hidden">
+            <?php 
+            $professor_image = nfu_get_professor_image($character);
+            if ($professor_image) : ?>
+                <img src="<?php echo esc_url($professor_image); ?>" alt="<?php echo esc_attr($char['name']); ?>" class="w-full h-full object-cover">
+            <?php else : ?>
+                <span class="text-2xl"><?php echo $char['icon']; ?></span>
+            <?php endif; ?>
         </div>
-        <div class="dialogue-content mx-4 flex-1 max-w-lg">
-            <div class="character-name <?php echo $char['color']; ?> font-bold text-sm mb-1">
+        <div class="dialogue-content <?php echo $position === 'right' ? 'max-w-2xl ml-auto' : 'max-w-2xl'; ?>">
+            <div class="character-name <?php echo $char['color']; ?> font-bold text-sm mb-2 <?php echo $position === 'right' ? 'text-right' : 'text-left'; ?>">
                 <?php echo $char['name']; ?>
             </div>
-            <div class="dialogue-bubble bg-white rounded-lg shadow p-4 relative">
-                <div class="bubble-tail absolute w-0 h-0 <?php echo $position === 'right' ? 'right-0 mr-[-8px]' : 'left-0 ml-[-8px]'; ?> top-4"
-                     style="border-style: solid; border-width: 8px; <?php echo $position === 'right' ? 'border-color: transparent transparent transparent white;' : 'border-color: transparent white transparent transparent;'; ?>">
+            <div class="dialogue-bubble <?php echo $position === 'right' ? 'bg-white' : 'custom-green'; ?> rounded-2xl shadow-sm p-4 relative border border-gray-200">
+                <div class="bubble-tail absolute w-0 h-0 top-4 
+                     <?php echo $position === 'right' ? 'right-0 translate-x-2' : 'left-0 -translate-x-2'; ?>"
+                     style="border-style: solid; border-width: 8px; 
+                     <?php echo $position === 'right' ? 
+                         'border-color: transparent transparent transparent #ffffff;' : 
+                         'border-color: transparent #06c755 transparent transparent;'; ?>">
                 </div>
-                <?php echo wpautop( $message ); ?>
+                
+                <div class="dialogue-text <?php echo $position === 'right' ? 'text-gray-800' : 'text-black'; ?> leading-relaxed text-base">
+                    <?php echo wpautop( $message ); ?>
+                </div>
             </div>
         </div>
     </div>

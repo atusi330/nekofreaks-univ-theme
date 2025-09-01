@@ -296,11 +296,42 @@ function nfu_register_acf_field_groups() {
                 'allow_null' => 1,
             ),
             array(
+                'key' => 'field_related_episode',
+                'label' => '関連講座回',
+                'name' => 'related_episode',
+                'type' => 'post_object',
+                'post_type' => array( 'lecture_episodes' ),
+                'return_format' => 'object',
+                'ui' => 1,
+                'allow_null' => 1,
+                'instructions' => '関連する講座回を選択してください',
+            ),
+            array(
+                'key' => 'field_tip_chat_data',
+                'label' => 'チャット形式データ',
+                'name' => 'tip_chat_data',
+                'type' => 'textarea',
+                'instructions' => 'JSON形式でチャット形式のデータを入力してください。例：{"messages": [{"speaker": "マロン学長", "message": "こんにちは！"}, {"speaker": "いち教授", "message": "今日は豆知識をお話しします"}]}',
+                'rows' => 10,
+            ),
+            array(
                 'key' => 'field_tip_source',
                 'label' => '情報源',
                 'name' => 'tip_source',
                 'type' => 'text',
                 'instructions' => '参考文献や情報源',
+            ),
+            array(
+                'key' => 'field_tip_difficulty',
+                'label' => '難易度',
+                'name' => 'tip_difficulty',
+                'type' => 'select',
+                'choices' => array(
+                    'beginner' => '初級',
+                    'intermediate' => '中級',
+                    'advanced' => '上級',
+                ),
+                'default_value' => 'beginner',
             ),
         ),
         'location' => array(
@@ -313,7 +344,7 @@ function nfu_register_acf_field_groups() {
             ),
         ),
         'menu_order' => 0,
-        'position' => 'side',
+        'position' => 'normal',
         'style' => 'default',
         'label_placement' => 'top',
         'instruction_placement' => 'label',
@@ -539,6 +570,8 @@ function nfu_register_acf_field_groups() {
         'hide_on_screen' => '',
     ) );
 }
+
+// ACFフィールドグループを登録
 add_action( 'acf/init', 'nfu_register_acf_field_groups' );
 
 /**

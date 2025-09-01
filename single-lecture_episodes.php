@@ -181,129 +181,25 @@ if ($key_points) {
             <!-- メインコンテンツ -->
             <div class="lg:col-span-3 space-y-8">
                 <!-- 冒頭会話 -->
-                <?php if (!empty($dialogues)) : ?>
-                    <section class="character-dialogues bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-comments text-blue-600 mr-2"></i>
-                            冒頭会話
-                        </h2>
-                        
-                        <!-- 黒板風背景 -->
-                        <div class="blackboard-bg bg-slate-800 rounded-lg p-6 mb-6">
-                            <div class="dialogue-container space-y-6">
-                                <?php foreach ($dialogues as $dialogue) : 
-                                    $speaker = $dialogue['speaker'] ?? 'maron';
-                                    $message = $dialogue['message'] ?? '';
-                                    $position = $dialogue['position'] ?? 'left';
-                                    
-                                    $speaker_info = $professor_data[$speaker] ?? $professor_data['maron'];
-                                    
-                                    // デバッグ情報
-                                    if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('administrator')) {
-                                        echo '<!-- Debug Loop: Speaker=' . esc_html($speaker) . ', SpeakerInfo=' . esc_html(json_encode($speaker_info)) . ' -->';
-                                    }
-                                ?>
-                                    <div class="character-dialogue flex <?php echo $position === 'right' ? 'flex-row-reverse' : 'flex-row'; ?> items-start">
-                                        <!-- キャラクターアイコン -->
-                                        <div class="character-icon flex-shrink-0 w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center <?php echo $position === 'right' ? 'ml-4' : 'mr-4'; ?> overflow-hidden">
-                                            <?php 
-                                            $professor_image = nfu_get_professor_image($speaker);
-                                            if ($professor_image) : ?>
-                                                <img src="<?php echo esc_url($professor_image); ?>" 
-                                                     alt="<?php echo esc_attr($speaker_info['name']); ?>" 
-                                                     class="w-full h-full object-cover">
-                                            <?php else : ?>
-                                                <?php if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('administrator')) : ?>
-                                                    <!-- Debug: Speaker=<?php echo esc_html($speaker); ?>, Icon=<?php echo esc_html($speaker_info['icon'] ?? 'undefined'); ?> -->
-                                                <?php endif; ?>
-                                                <i class="<?php echo esc_attr($speaker_info['icon'] ?? 'fas fa-cat'); ?> text-2xl text-gray-600"></i>
-                                            <?php endif; ?>
-                                        </div>
-                                        
-                                        <!-- 吹き出し -->
-                                        <div class="dialogue-content max-w-2xl">
-                                            <div class="character-name <?php echo $speaker_info['color']; ?> font-bold text-sm mb-2 <?php echo $position === 'right' ? 'text-right' : 'text-left'; ?>">
-                                                <?php echo esc_html($speaker_info['name']); ?>
-                                            </div>
-                                            <div class="dialogue-bubble bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-200 p-5 relative">
-                                                <!-- 三角形の矢印 -->
-                                                <div class="bubble-tail absolute w-0 h-0 top-5 
-                                                     <?php echo $position === 'right' ? 'right-0 translate-x-3' : 'left-0 -translate-x-3'; ?>"
-                                                     style="border-style: solid; border-width: 10px; 
-                                                     <?php echo $position === 'right' ? 
-                                                         'border-color: transparent transparent transparent #f9fafb;' : 
-                                                         'border-color: transparent #f9fafb transparent transparent;'; ?>">
-                                                </div>
-                                                
-                                                <div class="dialogue-text text-gray-900 leading-relaxed text-base">
-                                                    <?php echo wpautop(esc_html($message)); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    </section>
-                <?php else : ?>
-                    <!-- 冒頭会話データが空の場合のメッセージ -->
-                    <section class="character-dialogues bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-comments text-blue-600 mr-2"></i>
-                            冒頭会話
-                        </h2>
-                        <div class="empty-dialogue-message bg-gray-50 rounded-lg p-6 text-center">
-                            <i class="fas fa-cat text-4xl text-gray-400 mb-4"></i>
-                            <p class="text-gray-600 mb-2">冒頭会話データが設定されていません</p>
-                            <p class="text-sm text-gray-500">管理画面でJSON形式の会話データを追加してください</p>
-                            <?php if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('administrator')) : ?>
-                                <div class="debug-info mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-left text-xs">
-                                    <strong>Debug Info:</strong><br>
-                                    dialogue_json フィールド: <?php echo $dialogue_json ? 'データあり (' . strlen($dialogue_json) . ' 文字)' : '空'; ?><br>
-                                    解析された会話数: <?php echo count($dialogues); ?><br>
-                                    
-                                    <?php if ($dialogue_json) : ?>
-                                        <strong>JSON Validation:</strong><br>
-                                        <?php if ($json_validation['valid']) : ?>
-                                            ✅ JSON形式: 正常<br>
-                                            <?php if (isset($structure_validation)) : ?>
-                                                <?php if ($structure_validation['valid']) : ?>
-                                                    ✅ 構造: 正常 (<?php echo $structure_validation['count']; ?>件)<br>
-                                                <?php else : ?>
-                                                    ❌ 構造エラー:<br>
-                                                    <?php foreach ($structure_validation['errors'] as $error) : ?>
-                                                        &nbsp;&nbsp;• <?php echo esc_html($error); ?><br>
-                                                    <?php endforeach; ?>
-                                                <?php endif; ?>
-                                            <?php endif; ?>
-                                        <?php else : ?>
-                                            ❌ JSONエラー: <?php echo esc_html($json_validation['error']); ?><br>
-                                            <?php if (isset($json_validation['suggestion'])) : ?>
-                                                提案: <?php echo esc_html($json_validation['suggestion']); ?><br>
-                                            <?php endif; ?>
-                                        <?php endif; ?>
-                                        
-                                        <strong>JSON Preview:</strong><br>
-                                        元JSONの最初の100文字: <?php echo esc_html(substr($dialogue_json, 0, 100)); ?>...<br>
-                                        
-                                        <?php 
-                                        // 改善されたJSON処理関数を使用したプレビュー
-                                        $cleaned_preview = nfu_parse_dialogue_json($dialogue_json);
-                                        if (!empty($cleaned_preview)) {
-                                            echo "✅ 処理後の会話数: " . count($cleaned_preview) . "<br>";
-                                            if (isset($cleaned_preview[0])) {
-                                                echo "最初の会話: " . esc_html(json_encode($cleaned_preview[0], JSON_UNESCAPED_UNICODE)) . "<br>";
-                                            }
-                                        } else {
-                                            echo "❌ 処理後の会話: なし<br>";
-                                        }
-                                        ?>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    </section>
-                <?php endif; ?>
+                <?php
+                $chat_messages = array();
+                if (!empty($dialogues)) {
+                    foreach ($dialogues as $dialogue) {
+                        $chat_messages[] = array(
+                            'speaker' => $dialogue['speaker'] ?? 'maron',
+                            'message' => $dialogue['message'] ?? '',
+                            'position' => $dialogue['position'] ?? 'left'
+                        );
+                    }
+                }
+                
+                $title = '冒頭会話';
+                $icon_class = 'fas fa-comments text-blue-600';
+                $empty_message = '冒頭会話データが設定されていません';
+                $empty_description = '管理画面でJSON形式の会話データを追加してください';
+                
+                include get_template_directory() . '/template-parts/template_chat.php';
+                ?>
                 
                 <!-- 今回のポイント -->
                 <?php if (!empty($points)) : ?>
@@ -341,124 +237,25 @@ if ($key_points) {
                 </section>
                 
                 <!-- 今回のまとめ -->
-                <?php if (!empty($ending_dialogues)) : ?>
-                    <section class="ending-dialogues bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-comments text-purple-600 mr-2"></i>
-                            今回のまとめ
-                        </h2>
-                        
-                        <!-- 黒板風背景 -->
-                        <div class="blackboard-bg bg-slate-800 rounded-lg p-6 mb-6">
-                            <div class="dialogue-container space-y-6">
-                                <?php foreach ($ending_dialogues as $dialogue) : 
-                                    $speaker = $dialogue['speaker'] ?? 'maron';
-                                    $message = $dialogue['message'] ?? '';
-                                    $position = $dialogue['position'] ?? 'left';
-                                    
-                                    $speaker_info = $professor_data[$speaker] ?? $professor_data['maron'];
-                                ?>
-                                    <div class="character-dialogue flex <?php echo $position === 'right' ? 'flex-row-reverse' : 'flex-row'; ?> items-start">
-                                        <!-- キャラクターアイコン -->
-                                        <div class="character-icon flex-shrink-0 w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center <?php echo $position === 'right' ? 'ml-4' : 'mr-4'; ?> overflow-hidden">
-                                            <?php 
-                                            $professor_image = nfu_get_professor_image($speaker);
-                                            if ($professor_image) : ?>
-                                                <img src="<?php echo esc_url($professor_image); ?>" 
-                                                     alt="<?php echo esc_attr($speaker_info['name']); ?>" 
-                                                     class="w-full h-full object-cover">
-                                            <?php else : ?>
-                                                <?php if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('administrator')) : ?>
-                                                    <!-- Debug: Speaker=<?php echo esc_html($speaker); ?>, Icon=<?php echo esc_html($speaker_info['icon'] ?? 'undefined'); ?> -->
-                                                <?php endif; ?>
-                                                <i class="<?php echo esc_attr($speaker_info['icon'] ?? 'fas fa-cat'); ?> text-2xl text-gray-600"></i>
-                                            <?php endif; ?>
-                                        </div>
-                                        
-                                        <!-- 吹き出し -->
-                                        <div class="dialogue-content max-w-2xl">
-                                            <div class="character-name <?php echo $speaker_info['color']; ?> font-bold text-sm mb-2 <?php echo $position === 'right' ? 'text-right' : 'text-left'; ?>">
-                                                <?php echo esc_html($speaker_info['name']); ?>
-                                            </div>
-                                            <div class="dialogue-bubble bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-200 p-5 relative">
-                                                <!-- 三角形の矢印 -->
-                                                <div class="bubble-tail absolute w-0 h-0 top-5 
-                                                     <?php echo $position === 'right' ? 'right-0 translate-x-3' : 'left-0 -translate-x-3'; ?>"
-                                                     style="border-style: solid; border-width: 10px; 
-                                                     <?php echo $position === 'right' ? 
-                                                         'border-color: transparent transparent transparent #f9fafb;' : 
-                                                         'border-color: transparent #f9fafb transparent transparent;'; ?>">
-                                                </div>
-                                                
-                                                <div class="dialogue-text text-gray-900 leading-relaxed text-base">
-                                                    <?php echo wpautop(esc_html($message)); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    </section>
-                <?php else : ?>
-                    <!-- まとめ会話データが空の場合のメッセージ -->
-                    <section class="ending-dialogues bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-comments text-purple-600 mr-2"></i>
-                            今回のまとめ
-                        </h2>
-                        <div class="empty-dialogue-message bg-gray-50 rounded-lg p-6 text-center">
-                            <i class="fas fa-cat text-4xl text-gray-400 mb-4"></i>
-                            <p class="text-gray-600 mb-2">まとめ会話データが設定されていません</p>
-                            <p class="text-sm text-gray-500">管理画面でJSON形式のまとめ会話データを追加してください</p>
-                            <?php if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('administrator')) : ?>
-                                <div class="debug-info mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-left text-xs">
-                                    <strong>Debug Info:</strong><br>
-                                    ending_dialogue_json フィールド: <?php echo $ending_dialogue_json ? 'データあり (' . strlen($ending_dialogue_json) . ' 文字)' : '空'; ?><br>
-                                    解析された会話数: <?php echo count($ending_dialogues); ?><br>
-                                    
-                                    <?php if ($ending_dialogue_json) : ?>
-                                        <strong>JSON Validation:</strong><br>
-                                        <?php if ($ending_json_validation['valid']) : ?>
-                                            ✅ JSON形式: 正常<br>
-                                            <?php if (isset($ending_structure_validation)) : ?>
-                                                <?php if ($ending_structure_validation['valid']) : ?>
-                                                    ✅ 構造: 正常 (<?php echo $ending_structure_validation['count']; ?>件)<br>
-                                                <?php else : ?>
-                                                    ❌ 構造エラー:<br>
-                                                    <?php foreach ($ending_structure_validation['errors'] as $error) : ?>
-                                                        &nbsp;&nbsp;• <?php echo esc_html($error); ?><br>
-                                                    <?php endforeach; ?>
-                                                <?php endif; ?>
-                                            <?php endif; ?>
-                                        <?php else : ?>
-                                            ❌ JSONエラー: <?php echo esc_html($ending_json_validation['error']); ?><br>
-                                            <?php if (isset($ending_json_validation['suggestion'])) : ?>
-                                                提案: <?php echo esc_html($ending_json_validation['suggestion']); ?><br>
-                                            <?php endif; ?>
-                                        <?php endif; ?>
-                                        
-                                        <strong>JSON Preview:</strong><br>
-                                        元JSONの最初の100文字: <?php echo esc_html(substr($ending_dialogue_json, 0, 100)); ?>...<br>
-                                        
-                                        <?php 
-                                        // 改善されたJSON処理関数を使用したプレビュー
-                                        $cleaned_preview = nfu_parse_dialogue_json($ending_dialogue_json);
-                                        if (!empty($cleaned_preview)) {
-                                            echo "✅ 処理後の会話数: " . count($cleaned_preview) . "<br>";
-                                            if (isset($cleaned_preview[0])) {
-                                                echo "最初の会話: " . esc_html(json_encode($cleaned_preview[0], JSON_UNESCAPED_UNICODE)) . "<br>";
-                                            }
-                                        } else {
-                                            echo "❌ 処理後の会話: なし<br>";
-                                        }
-                                        ?>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    </section>
-                <?php endif; ?>
+                <?php
+                $chat_messages = array();
+                if (!empty($ending_dialogues)) {
+                    foreach ($ending_dialogues as $dialogue) {
+                        $chat_messages[] = array(
+                            'speaker' => $dialogue['speaker'] ?? 'maron',
+                            'message' => $dialogue['message'] ?? '',
+                            'position' => $dialogue['position'] ?? 'left'
+                        );
+                    }
+                }
+                
+                $title = '今回のまとめ';
+                $icon_class = 'fas fa-comments text-purple-600';
+                $empty_message = 'まとめ会話データが設定されていません';
+                $empty_description = '管理画面でJSON形式のまとめ会話データを追加してください';
+                
+                include get_template_directory() . '/template-parts/template_chat.php';
+                ?>
                 
                 <!-- 次回予告 -->
                 <?php if ($next_episode_preview && $episode_number < $total_episodes) : ?>
@@ -794,5 +591,36 @@ if ($key_points) {
 </main>
 
 <?php endwhile; endif; ?>
+
+<style>
+/* チャットテンプレート用の基本スタイル */
+.custom-green {
+    background-color: #06c755 !important;
+    box-shadow: 0 2px 8px rgba(6, 199, 85, 0.3) !important;
+}
+
+.bg-white {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* チャット背景のLINE風スタイル */
+.character-dialogues {
+    background: linear-gradient(135deg, #f0f2f5 0%, #e4e6ea 100%) !important;
+    position: relative;
+}
+
+.character-dialogues::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(74, 222, 128, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+</style>
 
 <?php get_footer(); ?>
