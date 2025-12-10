@@ -132,15 +132,6 @@ get_header(); ?>
     </div>
 </main>
 
-<script>
-jQuery(document).ready(function($) {
-    // 講座フィルター用のスクリプトを読み込み
-    if (typeof nfu_ajax !== 'undefined') {
-        // lecture-filter.jsの機能がここで動作
-    }
-});
-</script>
-
 <?php
-wp_enqueue_script( 'nfu-lecture-filter', NFU_THEME_URI . '/assets/js/lecture-filter.js', array('jquery'), NFU_THEME_VERSION, true );
+wp_enqueue_script( 'nfu-lecture-filter', NFU_THEME_URI . '/assets/js/lecture-filter.js', array(), NFU_THEME_VERSION, true );
 get_footer(); ?>

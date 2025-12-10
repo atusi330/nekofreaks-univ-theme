@@ -223,16 +223,32 @@ get_header(); ?>
 
 <!-- お気に入り管理用のJavaScript -->
 <script>
-jQuery(document).ready(function($) {
-    // お気に入り管理ページの初期化
-    initBookmarksPage();
+(function() {
+    'use strict';
+    
+    // 完了講座管理
+    var completedLecturesData = {
+        lectures: [],
+        currentOffset: 0,
+        perPage: 5,
+        hasMore: false
+    };
+    
+    // DOMContentLoadedイベントで初期化
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBookmarksPage);
+    } else {
+        initBookmarksPage();
+    }
     
     function initBookmarksPage() {
         console.log('Initializing bookmarks page...');
         
         // 読み込み中表示を初期化
-        $('#bookmarks-info').text('読み込み中...');
-        $('#completed-lectures-info').text('読み込み中...');
+        var bookmarksInfo = document.getElementById('bookmarks-info');
+        var completedInfo = document.getElementById('completed-lectures-info');
+        if (bookmarksInfo) bookmarksInfo.textContent = '読み込み中...';
+        if (completedInfo) completedInfo.textContent = '読み込み中...';
         
         // イベントハンドラーを先に設定
         setupEventHandlers();
@@ -253,14 +269,6 @@ jQuery(document).ready(function($) {
         console.log('Bookmarks page initialized');
     }
     
-    // 完了講座管理
-    var completedLecturesData = {
-        lectures: [],
-        currentOffset: 0,
-        perPage: 5,
-        hasMore: false
-    };
-    
     function clearLoadingStates() {
         var bookmarks = getBookmarks();
         var completedCount = 0;
@@ -270,8 +278,10 @@ jQuery(document).ready(function($) {
             completedCount = completedLecturesData.lectures.length;
         }
         
-        $('#bookmarks-info').text(bookmarks.length + '件のお気に入り');
-        $('#completed-lectures-info').text(completedCount + '件');
+        var bookmarksInfo = document.getElementById('bookmarks-info');
+        var completedInfo = document.getElementById('completed-lectures-info');
+        if (bookmarksInfo) bookmarksInfo.textContent = bookmarks.length + '件のお気に入り';
+        if (completedInfo) completedInfo.textContent = completedCount + '件';
         
         console.log('Loading states cleared - Bookmarks:', bookmarks.length, 'Completed:', completedCount);
     }
@@ -293,12 +303,15 @@ jQuery(document).ready(function($) {
             console.log('================================');
         }
         
+        var emptyBookmarks = document.getElementById('empty-bookmarks');
+        var bookmarksGrid = document.getElementById('bookmarks-grid');
+        
         if (bookmarks.length === 0) {
-            $('#empty-bookmarks').removeClass('hidden');
-            $('#bookmarks-grid').addClass('hidden');
+            if (emptyBookmarks) emptyBookmarks.classList.remove('hidden');
+            if (bookmarksGrid) bookmarksGrid.classList.add('hidden');
         } else {
-            $('#empty-bookmarks').addClass('hidden');
-            $('#bookmarks-grid').removeClass('hidden');
+            if (emptyBookmarks) emptyBookmarks.classList.add('hidden');
+            if (bookmarksGrid) bookmarksGrid.classList.remove('hidden');
             renderBookmarks(bookmarks);
         }
         
@@ -323,8 +336,10 @@ jQuery(document).ready(function($) {
         }
         
         // 進捗セクションを必ず表示
-        $('#empty-progress').addClass('hidden');
-        $('#progress-grid').removeClass('hidden');
+        var emptyProgress = document.getElementById('empty-progress');
+        var progressGrid = document.getElementById('progress-grid');
+        if (emptyProgress) emptyProgress.classList.add('hidden');
+        if (progressGrid) progressGrid.classList.remove('hidden');
         
         // エピソード完了データがある場合は必ず表示
         if (hasAnyProgressData) {
@@ -337,7 +352,9 @@ jQuery(document).ready(function($) {
         } else {
             console.log('No progress data found, showing empty state');
             // データがない場合でも空の状態として表示
-            $('#progress-grid').html('<div class="text-center py-8 text-gray-500">まだ学習を開始した講座がありません</div>');
+            if (progressGrid) {
+                progressGrid.innerHTML = '<div class="text-center py-8 text-gray-500">まだ学習を開始した講座がありません</div>';
+            }
         }
         
         // 統計情報を更新
@@ -346,7 +363,8 @@ jQuery(document).ready(function($) {
         // 読み込み完了の明示的な処理
         setTimeout(function() {
             // 統計情報を即座に更新
-            $('#bookmarks-count').text(bookmarks.length);
+            var bookmarksCount = document.getElementById('bookmarks-count');
+            if (bookmarksCount) bookmarksCount.textContent = bookmarks.length;
             
             // 学習中の講座数を計算
             var studyingLectures = new Set();
@@ -359,22 +377,28 @@ jQuery(document).ready(function($) {
                     studyingLectures.add(completion.lectureId);
                 }
             });
-            $('#progress-count').text(studyingLectures.size);
+            var progressCount = document.getElementById('progress-count');
+            if (progressCount) progressCount.textContent = studyingLectures.size;
             
             // 読み込み中テキストを削除
-            $('#bookmarks-info').text(bookmarks.length + '件のお気に入り');
+            var bookmarksInfo = document.getElementById('bookmarks-info');
+            if (bookmarksInfo) bookmarksInfo.textContent = bookmarks.length + '件のお気に入り';
             
             // ローディング状態のクラスを削除
-            $('.loading-state').removeClass('loading-state');
+            var loadingStates = document.querySelectorAll('.loading-state');
+            loadingStates.forEach(function(el) {
+                el.classList.remove('loading-state');
+            });
             
             // デバッグ用ログ
             console.log('Loading completed, bookmarks:', bookmarks.length, 'studying:', studyingLectures.size);
-        }, 100); // タイミングを短縮
+        }, 100);
         
         // 完了講座の読み込み中表示を強制的に更新
         setTimeout(function() {
             var completedCount = completedLecturesData.lectures ? completedLecturesData.lectures.length : 0;
-            $('#completed-lectures-info').text(completedCount + '件');
+            var completedInfo = document.getElementById('completed-lectures-info');
+            if (completedInfo) completedInfo.textContent = completedCount + '件';
             console.log('Completed lectures info updated:', completedCount);
         }, 200);
         
@@ -388,76 +412,133 @@ jQuery(document).ready(function($) {
                 completedCount = completedLecturesData.lectures.length;
             }
             
-            $('#bookmarks-info').text(bookmarks.length + '件のお気に入り');
-            $('#completed-lectures-info').text(completedCount + '件');
+            var bookmarksInfo = document.getElementById('bookmarks-info');
+            var completedInfo = document.getElementById('completed-lectures-info');
+            if (bookmarksInfo) bookmarksInfo.textContent = bookmarks.length + '件のお気に入り';
+            if (completedInfo) completedInfo.textContent = completedCount + '件';
             
             console.log('Final update - Bookmarks:', bookmarks.length, 'Completed:', completedCount);
         }, 300);
     }
     
     function renderBookmarks(bookmarks) {
-        var grid = $('#bookmarks-grid');
-        grid.empty();
+        var grid = document.getElementById('bookmarks-grid');
+        if (!grid) return;
+        
+        grid.innerHTML = '';
         
         bookmarks.forEach(function(bookmark) {
-            var card = $('<div class="bookmark-card bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow">' +
-                '<div class="flex items-start justify-between mb-3">' +
-                    '<div class="flex-1">' +
-                        '<h3 class="font-semibold text-gray-800 mb-2">' +
-                            '<a href="' + bookmark.url + '" class="text-purple-600 hover:underline">' + bookmark.title + '</a>' +
-                        '</h3>' +
-                        '<div class="text-xs text-gray-500">' +
-                            '追加日: ' + new Date(bookmark.timestamp).toLocaleDateString('ja-JP') +
-                        '</div>' +
+            var card = document.createElement('div');
+            card.className = 'bookmark-card bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow';
+            card.innerHTML = '<div class="flex items-start justify-between mb-3">' +
+                '<div class="flex-1">' +
+                    '<h3 class="font-semibold text-gray-800 mb-2">' +
+                        '<a href="' + bookmark.url + '" class="text-purple-600 hover:underline">' + bookmark.title + '</a>' +
+                    '</h3>' +
+                    '<div class="text-xs text-gray-500">' +
+                        '追加日: ' + new Date(bookmark.timestamp).toLocaleDateString('ja-JP') +
                     '</div>' +
-                    '<button class="remove-bookmark text-red-500 hover:text-red-700 ml-2" data-bookmark-id="' + bookmark.id + '">' +
-                        '<i class="fas fa-times"></i>' +
-                    '</button>' +
                 '</div>' +
-                '<div class="flex items-center gap-2">' +
-                    '<a href="' + bookmark.url + '" class="flex-1 text-center bg-purple-600 text-white py-2 px-3 rounded text-sm hover:bg-purple-700 transition-colors">' +
-                        '講座を見る' +
-                    '</a>' +
-                    '<button class="share-bookmark bg-gray-200 text-gray-600 py-2 px-3 rounded text-sm hover:bg-gray-300 transition-colors" data-url="' + bookmark.url + '" data-title="' + bookmark.title + '">' +
-                        '<i class="fas fa-share"></i>' +
-                    '</button>' +
-                '</div>' +
-            '</div>');
+                '<button class="remove-bookmark text-red-500 hover:text-red-700 ml-2" data-bookmark-id="' + bookmark.id + '">' +
+                    '<i class="fas fa-times"></i>' +
+                '</button>' +
+            '</div>' +
+            '<div class="flex items-center gap-2">' +
+                '<a href="' + bookmark.url + '" class="flex-1 text-center bg-purple-600 text-white py-2 px-3 rounded text-sm hover:bg-purple-700 transition-colors">' +
+                    '講座を見る' +
+                '</a>' +
+                '<button class="share-bookmark bg-gray-200 text-gray-600 py-2 px-3 rounded text-sm hover:bg-gray-300 transition-colors" data-url="' + bookmark.url + '" data-title="' + bookmark.title + '">' +
+                    '<i class="fas fa-share"></i>' +
+                '</button>' +
+            '</div>';
             
-            grid.append(card);
+            grid.appendChild(card);
         });
     }
     
     // 講座データを取得する関数
     function getLectureData(lectureIds) {
-        return new Promise(function(resolve, reject) {
-            $.ajax({
-                url: '/wp-admin/admin-ajax.php',
-                type: 'POST',
-                data: {
-                    action: 'get_lecture_data',
-                    lecture_ids: lectureIds,
-                    nonce: nfu_ajax.nonce
-                },
-                success: function(response) {
-                    if (response.success) {
-                        resolve(response.data);
-                    } else {
-                        reject(response.data);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    reject(error);
+        if (!window.nfu_ajax) {
+            return Promise.reject('nfu_ajax is not defined');
+        }
+        
+        var formData = new FormData();
+        formData.append('action', 'get_lecture_data');
+        formData.append('lecture_ids', JSON.stringify(lectureIds));
+        formData.append('nonce', window.nfu_ajax.nonce);
+        
+        return fetch(window.nfu_ajax.ajax_url, {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (typeof console !== 'undefined' && console.log) {
+                console.log('getLectureData response:', data);
+                if (data.success && data.data) {
+                    console.log('getLectureData data keys:', Object.keys(data.data));
                 }
-            });
+            }
+            if (data.success && data.data) {
+                // データのキーを正規化（数値キーと文字列キーの両方をチェック）
+                var normalizedData = {};
+                Object.keys(data.data).forEach(function(key) {
+                    var value = data.data[key];
+                    var normalizedKey = key;
+                    
+                    // 文字列がJSON配列の場合の処理（例: '["8"]'）
+                    if (typeof key === 'string' && key.match(/^\[.*\]$/)) {
+                        try {
+                            var decoded = JSON.parse(key);
+                            if (Array.isArray(decoded) && decoded.length > 0) {
+                                normalizedKey = decoded[0];
+                            }
+                        } catch (e) {
+                            // JSONパースに失敗した場合は元のキーを使用
+                        }
+                    }
+                    
+                    var numKey = parseInt(normalizedKey);
+                    var strKey = String(normalizedKey);
+                    
+                    // 数値キーと文字列キーの両方で保存
+                    if (!isNaN(numKey) && isFinite(numKey)) {
+                        normalizedData[numKey] = value;
+                        normalizedData[strKey] = value;
+                    } else {
+                        normalizedData[normalizedKey] = value;
+                    }
+                    
+                    // 元のキーも保存（フォールバック用）
+                    if (key !== normalizedKey && key !== String(numKey) && key !== numKey) {
+                        normalizedData[key] = value;
+                    }
+                });
+                
+                if (typeof console !== 'undefined' && console.log) {
+                    console.log('getLectureData normalized keys:', Object.keys(normalizedData));
+                    console.log('getLectureData sample data:', normalizedData[Object.keys(normalizedData)[0]]);
+                }
+                
+                return normalizedData;
+            } else {
+                console.error('getLectureData failed:', data);
+                throw new Error(data.data || 'Failed to load lecture data');
+            }
         });
     }
 
     function renderProgress(progress, episodeCompletions) {
         console.log('=== RENDER PROGRESS START ===');
-        var container = $('#progress-grid');
-        console.log('Container found:', container.length > 0);
-        container.empty();
+        var container = document.getElementById('progress-grid');
+        if (!container) {
+            console.error('progress-grid container not found');
+            return;
+        }
+        console.log('Container found:', container !== null);
+        container.innerHTML = '';
         
         // データが存在することを確認
         progress = progress || {};
@@ -535,13 +616,21 @@ jQuery(document).ready(function($) {
         
         // データが空の場合の処理
         if (Object.keys(lectureProgress).length === 0) {
-            container.html('<div class="text-center py-8 text-gray-500">まだ学習を開始した講座がありません</div>');
+            container.innerHTML = '<div class="text-center py-8 text-gray-500">まだ学習を開始した講座がありません</div>';
             return;
         }
         
         // 講座データを取得してからレンダリング
         var lectureIds = Object.keys(lectureProgress);
+        if (typeof console !== 'undefined' && console.log) {
+            console.log('Requesting lecture data for IDs:', lectureIds);
+        }
+        
         getLectureData(lectureIds).then(function(lectureData) {
+            if (typeof console !== 'undefined' && console.log) {
+                console.log('Received lecture data:', lectureData);
+            }
+            
             // 各講座の進捗アイテムをレンダリング
             Object.keys(lectureProgress).forEach(function(lectureId) {
                 var progData = lectureProgress[lectureId];
@@ -553,24 +642,65 @@ jQuery(document).ready(function($) {
                 var lectureTitle = '講座 #' + lectureId; // デフォルト
                 var lectureUrl = '/lectures/' + lectureId + '/';
                 
-                if (lectureData && lectureData[lectureId]) {
-                    lectureTitle = lectureData[lectureId].title || lectureTitle;
-                    lectureUrl = lectureData[lectureId].url || lectureUrl;
-                    totalEpisodes = lectureData[lectureId].total_episodes || totalEpisodes;
+                // 講座IDを数値に変換して試す（文字列の場合と数値の場合の両方に対応）
+                var lectureIdNum = parseInt(lectureId);
+                var lectureIdStr = String(lectureId);
+                
+                if (lectureData) {
+                    // まず利用可能なキーを確認
+                    var availableKeys = Object.keys(lectureData);
+                    
+                    // 数値キーと文字列キーの両方をチェック
+                    var lectureInfo = lectureData[lectureId] || 
+                                      lectureData[lectureIdNum] || 
+                                      lectureData[lectureIdStr];
+                    
+                    // 見つからない場合、JSON文字列化されたキーをチェック（PHP側のバグ対応）
+                    if (!lectureInfo) {
+                        var jsonKey1 = JSON.stringify([lectureId]);
+                        var jsonKey2 = JSON.stringify(lectureId);
+                        lectureInfo = lectureData[jsonKey1] || lectureData[jsonKey2];
+                    }
+                    
+                    // まだ見つからない場合、利用可能なキーから最初のデータを使用
+                    if (!lectureInfo && availableKeys.length > 0) {
+                        console.warn('Lecture data not found for ID:', lectureId, 'Available keys:', availableKeys);
+                        console.warn('Using first available key:', availableKeys[0]);
+                        lectureInfo = lectureData[availableKeys[0]];
+                    }
+                    
+                    if (lectureInfo) {
+                        lectureTitle = lectureInfo.title || lectureTitle;
+                        lectureUrl = lectureInfo.url || lectureUrl;
+                        totalEpisodes = lectureInfo.total_episodes || totalEpisodes;
+                        completionPercentage = Math.round((completedCount / totalEpisodes) * 100);
+                        
+                        if (typeof console !== 'undefined' && console.log) {
+                            console.log('Lecture info found:', {
+                                id: lectureId,
+                                title: lectureTitle,
+                                totalEpisodes: totalEpisodes,
+                                url: lectureUrl
+                            });
+                        }
+                    } else {
+                        console.error('Lecture data not found for ID:', lectureId, 'Available keys:', availableKeys);
+                    }
                 }
                 
-                var progressItem = $('<div class="progress-item bg-gray-50 rounded-lg p-4 border border-gray-200">' +
-                    '<div class="flex items-center justify-between mb-3">' +
-                        '<div>' +
-                            '<a href="' + lectureUrl + '" class="font-medium text-gray-800 hover:text-blue-600 transition-colors">' + lectureTitle + '</a>' +
-                            '<div class="text-xs text-gray-500 mt-1">現在のエピソード: ' + progData.currentEpisode + '</div>' +
-                        '</div>' +
-                        '<div class="text-right">' +
-                            '<span class="text-sm font-bold text-purple-600">' + completionPercentage + '%</span>' +
-                            '<div class="text-xs text-gray-500">' + completedCount + '/' + totalEpisodes + ' 完了</div>' +
-                        '</div>' +
+                var progressItem = document.createElement('div');
+                progressItem.className = 'progress-item bg-gray-50 rounded-lg p-4 border border-gray-200';
+                progressItem.innerHTML = '<div class="flex items-center justify-between mb-3">' +
+                    '<div>' +
+                        '<a href="' + lectureUrl + '" class="font-medium text-gray-800 hover:text-blue-600 transition-colors">' + lectureTitle + '</a>' +
+                        '<div class="text-xs text-gray-500 mt-1">現在のエピソード: ' + progData.currentEpisode + '</div>' +
                     '</div>' +
-                
+                    '<div class="text-right">' +
+                        '<span class="text-sm font-bold text-purple-600">' + completionPercentage + '%</span>' +
+                        '<div class="text-xs text-gray-500">' + completedCount + '/' + totalEpisodes + ' 完了</div>' +
+                    '</div>' +
+                '</div>' +
+            
                 '<div class="mb-3">' +
                     '<div class="flex items-center justify-between mb-1">' +
                         '<span class="text-xs text-gray-500">学習進捗</span>' +
@@ -598,9 +728,9 @@ jQuery(document).ready(function($) {
                 '</div>' +
                 
                 '<div class="flex space-x-2">' +
-                    '<button class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700 transition-colors" onclick="window.location.href=\'/lectures/' + lectureId + '/\'">' +
+                    '<a href="' + lectureUrl + '" class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700 transition-colors text-center inline-flex items-center justify-center">' +
                         '<i class="fas fa-book-open mr-1"></i>講座を見る' +
-                    '</button>' +
+                    '</a>' +
                     (completionPercentage < 100 ?
                         '<button class="continue-from-here bg-purple-600 text-white py-2 px-3 rounded text-sm hover:bg-purple-700 transition-colors" data-lecture-id="' + lectureId + '" data-episode="' + progData.currentEpisode + '">' +
                             '<i class="fas fa-play mr-1"></i>続きから' +
@@ -609,10 +739,9 @@ jQuery(document).ready(function($) {
                             '<i class="fas fa-check mr-1"></i>完了' +
                         '</button>'
                     ) +
-                '</div>' +
-            '</div>');
+                '</div>';
             
-            container.append(progressItem);
+            container.appendChild(progressItem);
         });
         console.log('=== RENDER PROGRESS COMPLETED ===');
         }).catch(function(error) {
@@ -624,40 +753,43 @@ jQuery(document).ready(function($) {
                 var totalEpisodes = 5;
                 var completionPercentage = Math.round((completedCount / totalEpisodes) * 100);
                 
-                var progressItem = $('<div class="progress-item bg-gray-50 rounded-lg p-4 border border-gray-200">' +
-                    '<div class="flex items-center justify-between mb-3">' +
-                        '<div>' +
-                            '<span class="font-medium text-gray-800">講座 #' + lectureId + '</span>' +
-                            '<div class="text-xs text-gray-500 mt-1">現在のエピソード: ' + progData.currentEpisode + '</div>' +
-                        '</div>' +
-                        '<div class="text-right">' +
-                            '<span class="text-sm font-bold text-purple-600">' + completionPercentage + '%</span>' +
-                            '<div class="text-xs text-gray-500">' + completedCount + '/' + totalEpisodes + ' 完了</div>' +
-                        '</div>' +
-                    '</div>' +
-                    
-                    '<div class="mb-3">' +
-                        '<div class="w-full bg-gray-200 rounded-full h-2">' +
-                            '<div class="bg-purple-600 h-2 rounded-full transition-all duration-300" style="width: ' + completionPercentage + '%"></div>' +
-                        '</div>' +
-                    '</div>' +
-                    
-                    '<div class="flex space-x-2">' +
-                        '<button class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700 transition-colors" onclick="window.location.href=\'/lectures/' + lectureId + '/\'">' +
-                            '<i class="fas fa-book-open mr-1"></i>講座を見る' +
-                        '</button>' +
-                        (completionPercentage < 100 ?
-                            '<button class="continue-from-here bg-purple-600 text-white py-2 px-3 rounded text-sm hover:bg-purple-700 transition-colors" data-lecture-id="' + lectureId + '" data-episode="' + progData.currentEpisode + '">' +
-                                '<i class="fas fa-play mr-1"></i>続きから' +
-                            '</button>' :
-                            '<button class="bg-green-600 text-white py-2 px-3 rounded text-sm cursor-default" disabled>' +
-                                '<i class="fas fa-check mr-1"></i>完了' +
-                            '</button>'
-                        ) +
-                    '</div>' +
-                '</div>');
+                // エラー時もlectureUrlを設定
+                var lectureUrl = '/lectures/' + lectureId + '/';
                 
-                container.append(progressItem);
+                var progressItem = document.createElement('div');
+                progressItem.className = 'progress-item bg-gray-50 rounded-lg p-4 border border-gray-200';
+                progressItem.innerHTML = '<div class="flex items-center justify-between mb-3">' +
+                    '<div>' +
+                        '<span class="font-medium text-gray-800">講座 #' + lectureId + '</span>' +
+                        '<div class="text-xs text-gray-500 mt-1">現在のエピソード: ' + progData.currentEpisode + '</div>' +
+                    '</div>' +
+                    '<div class="text-right">' +
+                        '<span class="text-sm font-bold text-purple-600">' + completionPercentage + '%</span>' +
+                        '<div class="text-xs text-gray-500">' + completedCount + '/' + totalEpisodes + ' 完了</div>' +
+                    '</div>' +
+                '</div>' +
+                
+                '<div class="mb-3">' +
+                    '<div class="w-full bg-gray-200 rounded-full h-2">' +
+                        '<div class="bg-purple-600 h-2 rounded-full transition-all duration-300" style="width: ' + completionPercentage + '%"></div>' +
+                    '</div>' +
+                '</div>' +
+                
+                '<div class="flex space-x-2">' +
+                    '<a href="' + lectureUrl + '" class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700 transition-colors text-center inline-flex items-center justify-center">' +
+                        '<i class="fas fa-book-open mr-1"></i>講座を見る' +
+                    '</a>' +
+                    (completionPercentage < 100 ?
+                        '<button class="continue-from-here bg-purple-600 text-white py-2 px-3 rounded text-sm hover:bg-purple-700 transition-colors" data-lecture-id="' + lectureId + '" data-episode="' + progData.currentEpisode + '">' +
+                            '<i class="fas fa-play mr-1"></i>続きから' +
+                        '</button>' :
+                        '<button class="bg-green-600 text-white py-2 px-3 rounded text-sm cursor-default" disabled>' +
+                            '<i class="fas fa-check mr-1"></i>完了' +
+                        '</button>'
+                    ) +
+                '</div>';
+                
+                container.appendChild(progressItem);
             });
         });
     }
@@ -709,7 +841,15 @@ jQuery(document).ready(function($) {
         
         // 講座データを取得してから完了講座を処理
         var lectureIds = Object.keys(lectureCompletions);
+        if (typeof console !== 'undefined' && console.log) {
+            console.log('Requesting lecture data for completed lectures, IDs:', lectureIds);
+        }
+        
         getLectureData(lectureIds).then(function(lectureData) {
+            if (typeof console !== 'undefined' && console.log) {
+                console.log('Received lecture data for completed lectures:', lectureData);
+            }
+            
             // 100%完了した講座のみを抽出
             var completedLectures = [];
             Object.keys(lectureCompletions).forEach(function(lectureId) {
@@ -718,11 +858,60 @@ jQuery(document).ready(function($) {
                 var lectureTitle = lectureDataItem.title; // デフォルト
                 var lectureUrl = '/lectures/' + lectureId + '/';
                 
+                // 講座IDを数値に変換して試す（文字列の場合と数値の場合の両方に対応）
+                var lectureIdNum = parseInt(lectureId);
+                var lectureIdStr = String(lectureId);
+                
                 // 講座データから実際のタイトルとエピソード数を取得
-                if (lectureData && lectureData[lectureId]) {
-                    lectureTitle = lectureData[lectureId].title || lectureTitle;
-                    lectureUrl = lectureData[lectureId].url || lectureUrl;
-                    totalEpisodes = lectureData[lectureId].total_episodes || totalEpisodes;
+                if (lectureData) {
+                    // まず利用可能なキーを確認
+                    var availableKeys = Object.keys(lectureData);
+                    
+                    // 数値キーと文字列キーの両方をチェック
+                    var lectureInfo = lectureData[lectureId] || 
+                                      lectureData[lectureIdNum] || 
+                                      lectureData[lectureIdStr];
+                    
+                    // 見つからない場合、JSON文字列化されたキーをチェック（PHP側のバグ対応）
+                    if (!lectureInfo) {
+                        var jsonKey1 = JSON.stringify([lectureId]);
+                        var jsonKey2 = JSON.stringify(lectureId);
+                        lectureInfo = lectureData[jsonKey1] || lectureData[jsonKey2];
+                    }
+                    
+                    // まだ見つからない場合、利用可能なキーから最初のデータを使用
+                    if (!lectureInfo && availableKeys.length > 0) {
+                        console.warn('Completed lecture data not found for ID:', lectureId, 'Available keys:', availableKeys);
+                        console.warn('Using first available key:', availableKeys[0]);
+                        lectureInfo = lectureData[availableKeys[0]];
+                    }
+                    
+                    if (lectureInfo) {
+                        lectureTitle = lectureInfo.title || lectureTitle;
+                        lectureUrl = lectureInfo.url || lectureUrl;
+                        totalEpisodes = lectureInfo.total_episodes || totalEpisodes;
+                        
+                        if (typeof console !== 'undefined' && console.log) {
+                            console.log('Completed lecture info found:', {
+                                id: lectureId,
+                                title: lectureTitle,
+                                totalEpisodes: totalEpisodes,
+                                url: lectureUrl
+                            });
+                        }
+                    } else {
+                        console.error('Completed lecture data not found for ID:', lectureId, 'Available keys:', availableKeys);
+                        // フォールバック: 利用可能なキーから最初のデータを使用
+                        if (availableKeys.length > 0) {
+                            console.warn('Using first available key:', availableKeys[0]);
+                            lectureInfo = lectureData[availableKeys[0]];
+                            if (lectureInfo) {
+                                lectureTitle = lectureInfo.title || lectureTitle;
+                                lectureUrl = lectureInfo.url || lectureUrl;
+                                totalEpisodes = lectureInfo.total_episodes || totalEpisodes;
+                            }
+                        }
+                    }
                 }
                 
                 // 完了エピソード数を正確に計算
@@ -737,6 +926,14 @@ jQuery(document).ready(function($) {
                         completedEpisodes: uniqueCompletedEpisodes.length,
                         url: lectureUrl
                     });
+                    
+                    if (typeof console !== 'undefined' && console.log) {
+                        console.log('Added completed lecture:', {
+                            id: lectureId,
+                            title: lectureTitle,
+                            url: lectureUrl
+                        });
+                    }
                 }
             });
             
@@ -759,14 +956,16 @@ jQuery(document).ready(function($) {
             // 完了講座の読み込み中表示を更新
             setTimeout(function() {
                 var completedCount = completedLecturesData.lectures ? completedLecturesData.lectures.length : 0;
-                $('#completed-lectures-info').text(completedCount + '件');
+                var completedInfo = document.getElementById('completed-lectures-info');
+                if (completedInfo) completedInfo.textContent = completedCount + '件';
                 console.log('Completed lectures loaded:', completedCount);
             }, 50);
             
             // 念のため、もう一度更新
             setTimeout(function() {
                 var completedCount = completedLecturesData.lectures ? completedLecturesData.lectures.length : 0;
-                $('#completed-lectures-info').text(completedCount + '件');
+                var completedInfo = document.getElementById('completed-lectures-info');
+                if (completedInfo) completedInfo.textContent = completedCount + '件';
             }, 150);
         }).catch(function(error) {
             console.error('Failed to load lecture data:', error);
@@ -802,18 +1001,21 @@ jQuery(document).ready(function($) {
             
             setTimeout(function() {
                 var completedCount = completedLecturesData.lectures ? completedLecturesData.lectures.length : 0;
-                $('#completed-lectures-info').text(completedCount + '件');
+                var completedInfo = document.getElementById('completed-lectures-info');
+                if (completedInfo) completedInfo.textContent = completedCount + '件';
             }, 50);
         });
     }
     
     function renderCompletedLectures(isInitial) {
-        var container = $('#completed-lectures-list');
+        var container = document.getElementById('completed-lectures-list');
+        if (!container) return;
         
         // completedLecturesDataが存在することを確認
         if (typeof completedLecturesData === 'undefined') {
             console.error('completedLecturesData is undefined in renderCompletedLectures');
-            $('#completed-lectures-info').text('0件');
+            var completedInfo = document.getElementById('completed-lectures-info');
+            if (completedInfo) completedInfo.textContent = '0件';
             return;
         }
         
@@ -822,7 +1024,7 @@ jQuery(document).ready(function($) {
         var perPage = completedLecturesData.perPage;
         
         if (isInitial) {
-            container.empty();
+            container.innerHTML = '';
             completedLecturesData.currentOffset = 0;
             offset = 0;
         }
@@ -831,54 +1033,59 @@ jQuery(document).ready(function($) {
         var lecturesSlice = lectures.slice(offset, offset + perPage);
         var remainingCount = lectures.length - (offset + perPage);
         
+        var emptyCompleted = document.getElementById('empty-completed');
+        var loadMoreCompleted = document.getElementById('load-more-completed');
+        var completedInfo = document.getElementById('completed-lectures-info');
+        var paginationInfo = document.getElementById('completed-pagination-info');
+        
         if (lectures.length === 0) {
-            $('#empty-completed').removeClass('hidden');
-            $('#completed-lectures-list').addClass('hidden');
-            $('#load-more-completed').addClass('hidden');
-            $('#completed-lectures-info').text('0件');
+            if (emptyCompleted) emptyCompleted.classList.remove('hidden');
+            if (container) container.classList.add('hidden');
+            if (loadMoreCompleted) loadMoreCompleted.classList.add('hidden');
+            if (completedInfo) completedInfo.textContent = '0件';
             return;
         }
         
-        $('#empty-completed').addClass('hidden');
-        $('#completed-lectures-list').removeClass('hidden');
+        if (emptyCompleted) emptyCompleted.classList.add('hidden');
+        if (container) container.classList.remove('hidden');
         
         // 講座アイテムを生成
         lecturesSlice.forEach(function(lecture) {
             var completedDate = new Date(lecture.completedAt).toLocaleDateString('ja-JP');
             
-            var lectureItem = $('<div class="completed-lecture-item flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">' +
-                '<div class="flex-1">' +
-                    '<div class="flex items-center mb-1">' +
-                        '<i class="fas fa-trophy text-yellow-500 mr-2"></i>' +
-                        '<h3 class="font-medium text-gray-800">' + lecture.title + '</h3>' +
-                    '</div>' +
-                    '<div class="text-sm text-gray-500">' +
-                        '<i class="fas fa-calendar mr-1"></i>' +
-                        '完了日: ' + completedDate +
-                    '</div>' +
+            var lectureItem = document.createElement('div');
+            lectureItem.className = 'completed-lecture-item flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors';
+            lectureItem.innerHTML = '<div class="flex-1">' +
+                '<div class="flex items-center mb-1">' +
+                    '<i class="fas fa-trophy text-yellow-500 mr-2"></i>' +
+                    '<h3 class="font-medium text-gray-800">' + lecture.title + '</h3>' +
                 '</div>' +
-                '<div class="ml-4">' +
-                    '<a href="' + lecture.url + '" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">' +
-                        '<i class="fas fa-external-link-alt mr-2"></i>' +
-                        '講座を見る' +
-                    '</a>' +
+                '<div class="text-sm text-gray-500">' +
+                    '<i class="fas fa-calendar mr-1"></i>' +
+                    '完了日: ' + completedDate +
                 '</div>' +
-            '</div>');
+            '</div>' +
+            '<div class="ml-4">' +
+                '<a href="' + lecture.url + '" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">' +
+                    '<i class="fas fa-external-link-alt mr-2"></i>' +
+                    '講座を見る' +
+                '</a>' +
+            '</div>';
             
-            container.append(lectureItem);
+            container.appendChild(lectureItem);
         });
         
         // 情報テキストを更新
-        $('#completed-lectures-info').text(lectures.length + '件');
+        if (completedInfo) completedInfo.textContent = lectures.length + '件';
         console.log('renderCompletedLectures: Updated info text to', lectures.length + '件');
         
         // もっと見るボタンの表示制御
         if (remainingCount > 0) {
-            $('#load-more-completed').removeClass('hidden');
-            $('#completed-pagination-info').text('残り ' + remainingCount + '件');
+            if (loadMoreCompleted) loadMoreCompleted.classList.remove('hidden');
+            if (paginationInfo) paginationInfo.textContent = '残り ' + remainingCount + '件';
             completedLecturesData.hasMore = true;
         } else {
-            $('#load-more-completed').addClass('hidden');
+            if (loadMoreCompleted) loadMoreCompleted.classList.add('hidden');
             completedLecturesData.hasMore = false;
         }
         
@@ -892,7 +1099,8 @@ jQuery(document).ready(function($) {
         var completions = getEpisodeCompletions();
         
         // 統計情報の更新
-        $('#bookmarks-count').text(bookmarks.length);
+        var bookmarksCount = document.getElementById('bookmarks-count');
+        if (bookmarksCount) bookmarksCount.textContent = bookmarks.length;
         
         // 学習中の講座数を正確に計算（従来の進捗 + エピソード完了データ）
         var studyingLectures = new Set();
@@ -910,47 +1118,136 @@ jQuery(document).ready(function($) {
             }
         });
         
-        $('#progress-count').text(studyingLectures.size);
+        var progressCount = document.getElementById('progress-count');
+        if (progressCount) progressCount.textContent = studyingLectures.size;
         
         // 完了率の計算を改善
         var lectureCompletions = {};
-        var totalEpisodes = 5; // デフォルト値
         
         // 各講座の完了エピソード数を計算
         Object.values(completions).forEach(function(completion) {
             var lectureId = completion.lectureId;
             if (!lectureCompletions[lectureId]) {
-                lectureCompletions[lectureId] = new Set();
+                lectureCompletions[lectureId] = {
+                    completedEpisodes: new Set(),
+                    totalEpisodes: 5 // デフォルト値（後で更新される）
+                };
             }
-            lectureCompletions[lectureId].add(completion.episodeNumber);
+            lectureCompletions[lectureId].completedEpisodes.add(completion.episodeNumber);
         });
         
-        // 完了率を計算
-        var completionRates = [];
-        Object.keys(lectureCompletions).forEach(function(lectureId) {
-            var completedEpisodes = lectureCompletions[lectureId].size;
-            completionRates.push((completedEpisodes / totalEpisodes) * 100);
-        });
+        // 講座データを取得して完了率を正確に計算
+        var lectureIds = Object.keys(lectureCompletions);
+        if (lectureIds.length > 0 && window.nfu_ajax) {
+            var formData = new FormData();
+            formData.append('action', 'get_lecture_data');
+            formData.append('lecture_ids', JSON.stringify(lectureIds));
+            formData.append('nonce', window.nfu_ajax.nonce);
+            
+            fetch(window.nfu_ajax.ajax_url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success && data.data) {
+                    var lectureData = data.data;
+                    
+                    // 各講座の実際のエピソード数を更新
+                    Object.keys(lectureCompletions).forEach(function(lectureId) {
+                        if (lectureData[lectureId] && lectureData[lectureId].total_episodes) {
+                            lectureCompletions[lectureId].totalEpisodes = lectureData[lectureId].total_episodes;
+                        }
+                    });
+                    
+                    // 完了率を計算
+                    var completionRates = [];
+                    Object.keys(lectureCompletions).forEach(function(lectureId) {
+                        var completedEpisodes = lectureCompletions[lectureId].completedEpisodes.size;
+                        var totalEpisodes = lectureCompletions[lectureId].totalEpisodes;
+                        if (totalEpisodes > 0) {
+                            var rate = (completedEpisodes / totalEpisodes) * 100;
+                            // 100%を超えないように制限
+                            completionRates.push(Math.min(100, Math.round(rate)));
+                        }
+                    });
+                    
+                    var avgCompletion = completionRates.length > 0 ? 
+                        Math.round(completionRates.reduce(function(a, b) { return a + b; }, 0) / completionRates.length) : 0;
+                    var completionRate = document.getElementById('completion-rate');
+                    if (completionRate) completionRate.textContent = avgCompletion + '%';
+                    
+                    console.log('Completion rate calculated:', {
+                        rates: completionRates,
+                        average: avgCompletion,
+                        lectureCount: completionRates.length
+                    });
+                    
+                    // 完了した講座数を計算
+                    var fullyCompletedLectures = 0;
+                    Object.keys(lectureCompletions).forEach(function(lectureId) {
+                        var completedEpisodes = lectureCompletions[lectureId].completedEpisodes.size;
+                        var totalEpisodes = lectureCompletions[lectureId].totalEpisodes;
+                        if (completedEpisodes >= totalEpisodes) {
+                            fullyCompletedLectures++;
+                        }
+                    });
+                    
+                    var completedLecturesEl = document.getElementById('completed-lectures');
+                    if (completedLecturesEl) completedLecturesEl.textContent = fullyCompletedLectures;
+                    
+                    // 完了講座の情報表示はloadCompletedLectures()で更新されるので、ここでは更新しない
+                } else {
+                    // データ取得に失敗した場合はデフォルト値で計算
+                    calculateCompletionRateWithDefault(lectureCompletions);
+                }
+            })
+            .catch(function(error) {
+                console.error('Failed to load lecture data for stats:', error);
+                // エラー時はデフォルト値で計算
+                calculateCompletionRateWithDefault(lectureCompletions);
+            });
+        } else {
+            // 講座データがない場合はデフォルト値で計算
+            calculateCompletionRateWithDefault(lectureCompletions);
+        }
         
-        var avgCompletion = completionRates.length > 0 ? 
-            Math.round(completionRates.reduce((a, b) => a + b) / completionRates.length) : 0;
-        $('#completion-rate').text(avgCompletion + '%');
+        // デフォルト値で完了率を計算する関数
+        function calculateCompletionRateWithDefault(lectureCompletions) {
+            var totalEpisodes = 5; // デフォルト値
+            var completionRates = [];
+            Object.keys(lectureCompletions).forEach(function(lectureId) {
+                var completedEpisodes = lectureCompletions[lectureId].completedEpisodes.size;
+                completionRates.push((completedEpisodes / totalEpisodes) * 100);
+            });
+            
+            var avgCompletion = completionRates.length > 0 ? 
+                Math.round(completionRates.reduce(function(a, b) { return a + b; }, 0) / completionRates.length) : 0;
+            var completionRate = document.getElementById('completion-rate');
+            if (completionRate) completionRate.textContent = avgCompletion + '%';
+            
+            // 完了した講座数を計算
+            var fullyCompletedLectures = 0;
+            Object.keys(lectureCompletions).forEach(function(lectureId) {
+                var completedEpisodes = lectureCompletions[lectureId].completedEpisodes.size;
+                if (completedEpisodes >= totalEpisodes) {
+                    fullyCompletedLectures++;
+                }
+            });
+            
+            var completedLecturesEl = document.getElementById('completed-lectures');
+            if (completedLecturesEl) completedLecturesEl.textContent = fullyCompletedLectures;
+            
+            // 完了講座の情報表示はloadCompletedLectures()で更新されるので、ここでは更新しない
+        }
         
-
-        
-        // 完了した講座数を計算
-        var fullyCompletedLectures = 0;
-        Object.keys(lectureCompletions).forEach(function(lectureId) {
-            if (lectureCompletions[lectureId].size >= 5) {
-                fullyCompletedLectures++;
-            }
-        });
-        
-        $('#completed-lectures').text(fullyCompletedLectures);
-        
-        // 完了講座の情報表示も更新
-        $('#completed-lectures-info').text(fullyCompletedLectures + '件');
-        console.log('updateStats: Updated completed lectures info to', fullyCompletedLectures + '件');
+        // 完了した講座数はcompletedLecturesDataから取得（loadCompletedLectures()で設定される）
+        if (typeof completedLecturesData !== 'undefined' && completedLecturesData.lectures) {
+            var completedLectures = document.getElementById('completed-lectures');
+            if (completedLectures) completedLectures.textContent = completedLecturesData.lectures.length;
+        }
         
         // 今週の学習エピソード数を計算（概算）
         var weeklyEpisodes = 0;
@@ -963,149 +1260,188 @@ jQuery(document).ready(function($) {
         });
         
         var estimatedMinutes = weeklyEpisodes * 15; // 1エピソード15分と仮定
-        $('#weekly-time').text(estimatedMinutes + '分');
-        $('#weekly-progress').css('width', Math.min(100, (weeklyEpisodes / 5) * 100) + '%');
+        var weeklyTime = document.getElementById('weekly-time');
+        if (weeklyTime) weeklyTime.textContent = estimatedMinutes + '分';
+        var weeklyProgress = document.getElementById('weekly-progress');
+        if (weeklyProgress) weeklyProgress.style.width = Math.min(100, (weeklyEpisodes / 5) * 100) + '%';
         
         // お気に入り講師の統計
         var favoriteProfessor = getFavoriteProfessor();
-        $('#favorite-professor').text(favoriteProfessor);
+        var favoriteProf = document.getElementById('favorite-professor');
+        if (favoriteProf) favoriteProf.textContent = favoriteProfessor;
     }
     
     function setupEventHandlers() {
         // お気に入り削除（イベント委譲を改善）
-        $(document).on('click', '.remove-bookmark', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            var bookmarkId = $(this).data('bookmark-id');
-            console.log('Remove bookmark clicked:', bookmarkId);
-            
-            if (bookmarkId) {
-                removeBookmark(bookmarkId);
-            } else {
-                console.error('Bookmark ID not found');
+        document.addEventListener('click', function(e) {
+            // e.targetが要素でない場合（テキストノードなど）は親要素を取得
+            var target = e.target.nodeType === 3 ? e.target.parentElement : e.target;
+            var removeBtn = target.closest ? target.closest('.remove-bookmark') : null;
+            if (removeBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                var bookmarkId = removeBtn.dataset.bookmarkId;
+                console.log('Remove bookmark clicked:', bookmarkId);
+                
+                if (bookmarkId) {
+                    removeBookmark(bookmarkId);
+                } else {
+                    console.error('Bookmark ID not found');
+                }
             }
         });
         
         // 削除ボタンのホバー効果を追加
-        $(document).on('mouseenter', '.remove-bookmark', function() {
-            $(this).addClass('text-red-700');
-        }).on('mouseleave', '.remove-bookmark', function() {
-            $(this).removeClass('text-red-700');
-        });
+        document.addEventListener('mouseenter', function(e) {
+            var target = e.target.nodeType === 3 ? e.target.parentElement : e.target;
+            var removeBtn = target.closest ? target.closest('.remove-bookmark') : null;
+            if (removeBtn) {
+                removeBtn.classList.add('text-red-700');
+            }
+        }, true);
+        
+        document.addEventListener('mouseleave', function(e) {
+            var target = e.target.nodeType === 3 ? e.target.parentElement : e.target;
+            var removeBtn = target.closest ? target.closest('.remove-bookmark') : null;
+            if (removeBtn) {
+                removeBtn.classList.remove('text-red-700');
+            }
+        }, true);
         
         // すべて削除
-        $('#clear-all-bookmarks').on('click', function() {
-            if (confirm('すべてのお気に入りを削除しますか？')) {
-                localStorage.removeItem('nfu_bookmarks');
-                loadBookmarksData();
-                updateStats();
-                showNotification('すべてのお気に入りを削除しました', 'info');
-            }
-        });
+        var clearAllBtn = document.getElementById('clear-all-bookmarks');
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', function() {
+                if (confirm('すべてのお気に入りを削除しますか？')) {
+                    localStorage.removeItem('nfu_bookmarks');
+                    loadBookmarksData();
+                    updateStats();
+                    showNotification('すべてのお気に入りを削除しました', 'info');
+                }
+            });
+        }
         
         // データリセット
-        $('#reset-all-data').on('click', function() {
-            if (confirm('すべてのデータをリセットしますか？これにより、お気に入り、学習進捗、完了講座の履歴が削除されます。')) {
-                localStorage.removeItem('nfu_bookmarks');
-                localStorage.removeItem('nfu_progress');
-                localStorage.removeItem('nfu_episode_completion');
-                localStorage.removeItem('nfu_favorite_professor');
-                loadBookmarksData();
-                updateStats();
-                showNotification('すべてのデータをリセットしました', 'info');
-            }
-        });
-        
-
+        var resetAllBtn = document.getElementById('reset-all-data');
+        if (resetAllBtn) {
+            resetAllBtn.addEventListener('click', function() {
+                if (confirm('すべてのデータをリセットしますか？これにより、お気に入り、学習進捗、完了講座の履歴が削除されます。')) {
+                    localStorage.removeItem('nfu_bookmarks');
+                    localStorage.removeItem('nfu_progress');
+                    localStorage.removeItem('nfu_episode_completion');
+                    localStorage.removeItem('nfu_favorite_professor');
+                    loadBookmarksData();
+                    updateStats();
+                    showNotification('すべてのデータをリセットしました', 'info');
+                }
+            });
+        }
         
         // ソート
-        $('#bookmark-sort').on('change', function() {
-            var sortType = $(this).val();
-            sortBookmarks(sortType);
-        });
+        var bookmarkSort = document.getElementById('bookmark-sort');
+        if (bookmarkSort) {
+            bookmarkSort.addEventListener('change', function() {
+                var sortType = this.value;
+                sortBookmarks(sortType);
+            });
+        }
         
         // 続きから学習（ヘッダーボタン）
-        $('#continue-learning').on('click', function() {
-            var progress = getProgress();
-            var episodeCompletions = getEpisodeCompletions();
-            var lectureIds = Object.keys(progress);
-            
-            if (lectureIds.length === 0 && Object.keys(episodeCompletions).length === 0) {
-                showNotification('学習中の講座がありません', 'info');
-                return;
-            }
-            
-            // 最後に更新された講座を取得
-            var latestLecture = null;
-            var latestTimestamp = 0;
-            
-            // 従来の進捗データをチェック
-            lectureIds.forEach(function(lectureId) {
-                if (progress[lectureId].timestamp > latestTimestamp) {
-                    latestTimestamp = progress[lectureId].timestamp;
-                    latestLecture = lectureId;
+        var continueLearning = document.getElementById('continue-learning');
+        if (continueLearning) {
+            continueLearning.addEventListener('click', function() {
+                var progress = getProgress();
+                var episodeCompletions = getEpisodeCompletions();
+                var lectureIds = Object.keys(progress);
+                
+                if (lectureIds.length === 0 && Object.keys(episodeCompletions).length === 0) {
+                    showNotification('学習中の講座がありません', 'info');
+                    return;
+                }
+                
+                // 最後に更新された講座を取得
+                var latestLecture = null;
+                var latestTimestamp = 0;
+                
+                // 従来の進捗データをチェック
+                lectureIds.forEach(function(lectureId) {
+                    if (progress[lectureId].timestamp > latestTimestamp) {
+                        latestTimestamp = progress[lectureId].timestamp;
+                        latestLecture = lectureId;
+                    }
+                });
+                
+                // エピソード完了データもチェック
+                Object.keys(episodeCompletions).forEach(function(episodeId) {
+                    var completion = episodeCompletions[episodeId];
+                    if (completion.timestamp > latestTimestamp) {
+                        latestTimestamp = completion.timestamp;
+                        latestLecture = completion.lectureId;
+                    }
+                });
+                
+                if (latestLecture) {
+                    window.location.href = '/lectures/' + latestLecture + '/';
                 }
             });
-            
-            // エピソード完了データもチェック
-            Object.keys(episodeCompletions).forEach(function(episodeId) {
-                var completion = episodeCompletions[episodeId];
-                if (completion.timestamp > latestTimestamp) {
-                    latestTimestamp = completion.timestamp;
-                    latestLecture = completion.lectureId;
-                }
-            });
-            
-            if (latestLecture) {
-                window.location.href = '/lectures/' + latestLecture + '/';
-            }
-        });
+        }
         
         // 続きから学習（個別ボタン）
-        $(document).on('click', '.continue-from-here', function() {
-            var button = $(this);
-            var lectureId = button.data('lecture-id');
-            var episodeNumber = button.data('episode');
-            
-            if (lectureId && episodeNumber) {
-                window.location.href = '/lectures/' + lectureId + '/episode-' + episodeNumber + '/';
-            } else if (lectureId) {
-                window.location.href = '/lectures/' + lectureId + '/';
+        document.addEventListener('click', function(e) {
+            var target = e.target.nodeType === 3 ? e.target.parentElement : e.target;
+            var continueBtn = target.closest ? target.closest('.continue-from-here') : null;
+            if (continueBtn) {
+                var lectureId = continueBtn.dataset.lectureId;
+                var episodeNumber = continueBtn.dataset.episode;
+                
+                if (lectureId && episodeNumber) {
+                    window.location.href = '/lectures/' + lectureId + '/episode-' + episodeNumber + '/';
+                } else if (lectureId) {
+                    window.location.href = '/lectures/' + lectureId + '/';
+                }
             }
         });
         
         // シェア
-        $(document).on('click', '.share-bookmark', function() {
-            var url = $(this).data('url');
-            var title = $(this).data('title');
-            shareContent(url, title);
+        document.addEventListener('click', function(e) {
+            var target = e.target.nodeType === 3 ? e.target.parentElement : e.target;
+            var shareBtn = target.closest ? target.closest('.share-bookmark') : null;
+            if (shareBtn) {
+                var url = shareBtn.dataset.url;
+                var title = shareBtn.dataset.title;
+                shareContent(url, title);
+            }
         });
         
         // 完了講座の「さらに読み込む」ボタン
-        $('#load-more-completed .load-more-btn').on('click', function() {
-            var button = $(this);
-            var originalText = button.html();
-            
-            // ローディング状態
-            button.html('<i class="fas fa-spinner fa-spin mr-2"></i>読み込み中...')
-                  .prop('disabled', true);
-            
-            // 少し遅延を入れてUXを向上
-            setTimeout(function() {
-                renderCompletedLectures(false); // 追加読み込み
+        var loadMoreBtn = document.querySelector('#load-more-completed .load-more-btn');
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', function() {
+                var originalHTML = this.innerHTML;
                 
-                // ボタンの状態をリセット
-                button.html(originalText).prop('disabled', false);
-            }, 300);
-        });
+                // ローディング状態
+                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>読み込み中...';
+                this.disabled = true;
+                
+                // 少し遅延を入れてUXを向上
+                setTimeout(function() {
+                    renderCompletedLectures(false); // 追加読み込み
+                    
+                    // ボタンの状態をリセット
+                    loadMoreBtn.innerHTML = originalHTML;
+                    loadMoreBtn.disabled = false;
+                }, 300);
+            });
+        }
         
         // お気に入り講師変更ボタン
-        $('#change-favorite-professor').on('click', function() {
-            window.location.href = '<?php echo home_url('/professor/'); ?>';
-        });
-
-
+        var changeFavoriteProf = document.getElementById('change-favorite-professor');
+        if (changeFavoriteProf) {
+            changeFavoriteProf.addEventListener('click', function() {
+                window.location.href = '<?php echo home_url('/professor/'); ?>';
+            });
+        }
     }
     
     function removeBookmark(bookmarkId) {
@@ -1121,26 +1457,33 @@ jQuery(document).ready(function($) {
         localStorage.setItem('nfu_bookmarks', JSON.stringify(updatedBookmarks));
         
         // 削除したブックマークの要素を即座に削除
-        var bookmarkCard = $('.remove-bookmark[data-bookmark-id="' + bookmarkId + '"]').closest('.bookmark-card');
+        var removeBtn = document.querySelector('.remove-bookmark[data-bookmark-id="' + bookmarkId + '"]');
+        var bookmarkCard = removeBtn && removeBtn.closest ? removeBtn.closest('.bookmark-card') : null;
         
-        console.log('Found bookmark card:', bookmarkCard.length);
+        console.log('Found bookmark card:', bookmarkCard !== null);
         
-        if (bookmarkCard.length > 0) {
-            bookmarkCard.fadeOut(300, function() {
-                $(this).remove();
+        if (bookmarkCard) {
+            bookmarkCard.style.opacity = '0';
+            bookmarkCard.style.transition = 'opacity 0.3s';
+            setTimeout(function() {
+                bookmarkCard.remove();
                 
                 // 削除後にお気に入りが空になった場合の処理
                 if (updatedBookmarks.length === 0) {
-                    $('#empty-bookmarks').removeClass('hidden');
-                    $('#bookmarks-grid').addClass('hidden');
+                    var emptyBookmarks = document.getElementById('empty-bookmarks');
+                    var bookmarksGrid = document.getElementById('bookmarks-grid');
+                    if (emptyBookmarks) emptyBookmarks.classList.remove('hidden');
+                    if (bookmarksGrid) bookmarksGrid.classList.add('hidden');
                 }
                 
                 // 統計を更新
-                $('#bookmarks-count').text(updatedBookmarks.length);
-                $('#bookmarks-info').text(updatedBookmarks.length + '件のお気に入り');
+                var bookmarksCount = document.getElementById('bookmarks-count');
+                var bookmarksInfo = document.getElementById('bookmarks-info');
+                if (bookmarksCount) bookmarksCount.textContent = updatedBookmarks.length;
+                if (bookmarksInfo) bookmarksInfo.textContent = updatedBookmarks.length + '件のお気に入り';
                 
                 console.log('Bookmark removed successfully');
-            });
+            }, 300);
         } else {
             console.error('Bookmark card not found for ID:', bookmarkId);
             // 要素が見つからない場合は、ページを再読み込み
@@ -1218,22 +1561,24 @@ jQuery(document).ready(function($) {
         var bgColor = type === 'success' ? 'bg-green-500' : 
                       type === 'error' ? 'bg-red-500' : 'bg-blue-500';
         
-        var notification = $('<div class="fixed top-4 right-4 ' + bgColor + ' text-white px-4 py-2 rounded-lg shadow-lg z-50">' +
-            '<div class="flex items-center">' +
-                '<i class="fas fa-paw mr-2"></i>' +
-                '<span>' + message + '</span>' +
-            '</div>' +
-        '</div>');
+        var notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 ' + bgColor + ' text-white px-4 py-2 rounded-lg shadow-lg z-50';
+        notification.innerHTML = '<div class="flex items-center">' +
+            '<i class="fas fa-paw mr-2"></i>' +
+            '<span>' + message + '</span>' +
+        '</div>';
         
-        $('body').append(notification);
+        document.body.appendChild(notification);
         
         setTimeout(function() {
-            notification.fadeOut(function() {
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.3s';
+            setTimeout(function() {
                 notification.remove();
-            });
+            }, 300);
         }, 3000);
     }
-});
+})();
 </script>
 
 <?php get_footer(); ?>

@@ -61,14 +61,11 @@ function nfu_enqueue_scripts() {
         NFU_THEME_VERSION 
     );
     
-    // jQuery (WordPress同梱版)
-    wp_enqueue_script( 'jquery' );
-    
     // メインJavaScript
     wp_enqueue_script(
         'nfu-main',
         NFU_THEME_URI . '/assets/js/main.js',
-        array('jquery'),
+        array(),
         NFU_THEME_VERSION,
         true
     );
@@ -77,7 +74,7 @@ function nfu_enqueue_scripts() {
     wp_enqueue_script(
         'nfu-bookmark-share',
         NFU_THEME_URI . '/assets/js/bookmark-share.js',
-        array('jquery'),
+        array(),
         NFU_THEME_VERSION,
         true
     );
@@ -86,7 +83,7 @@ function nfu_enqueue_scripts() {
     wp_enqueue_script(
         'nfu-episode-completion',
         NFU_THEME_URI . '/assets/js/episode-completion.js',
-        array('jquery'),
+        array(),
         NFU_THEME_VERSION,
         true
     );
@@ -193,58 +190,222 @@ function nfu_get_professor_class( $professor ) {
  * 講師の表示名を取得
  */
 function nfu_get_professor_name( $professor ) {
-    $names = array(
-        'maron'   => 'マロン学長',
-        'ichi'    => 'いち教授',
-        'hachi'   => 'はち助教授',
-        'jiji'    => 'ジジ助手',
-        'daifuku' => '大福先代学長',
-    );
+    $professor_data = nfu_get_professor_by_id( $professor );
     
-    return isset( $names[$professor] ) ? $names[$professor] : '';
+    if ( $professor_data && isset( $professor_data['name'] ) ) {
+        return $professor_data['name'];
+    }
+    
+    return '';
 }
 
 /**
  * 講師の画像を取得
  */
 function nfu_get_professor_image( $professor ) {
-    // 講師のスラッグから投稿を検索
-    $professor_post = get_page_by_path( $professor, OBJECT, 'professor' );
+    $professor_data = nfu_get_professor_by_id( $professor );
     
-    if ( $professor_post ) {
-        // ACFフィールドから画像を取得
-        $professor_image = nfu_get_field( 'professor_image', $professor_post->ID );
-        
-        if ( $professor_image ) {
-            return $professor_image;
-        }
-    }
-    
-    // フォールバック: 講師別の画像パスを定義（実際のファイル構造に合わせて修正）
-    $images = array(
-        'maron'   => NFU_THEME_URI . '/assets/images/maron_image.webp',
-        'ichi'    => NFU_THEME_URI . '/assets/images/characters/ichi.webp',
-        'hachi'   => NFU_THEME_URI . '/assets/images/characters/hachi.webp',
-        'jiji'    => NFU_THEME_URI . '/assets/images/characters/jiji.webp',
-        'daifuku' => NFU_THEME_URI . '/assets/images/characters/daifuku.webp',
-    );
-    
-    // 画像が存在するかチェック
-    if ( isset( $images[$professor] ) ) {
-        $image_path = str_replace( NFU_THEME_URI, NFU_THEME_DIR, $images[$professor] );
-        if ( file_exists( $image_path ) ) {
-            return $images[$professor];
-        }
-    }
-    
-    // デバッグ情報（管理者のみ）
-    if ( defined( 'WP_DEBUG' ) && WP_DEBUG && current_user_can( 'administrator' ) ) {
-        error_log( 'NFU Professor Image Debug: Professor=' . $professor . ', Post Found=' . ( $professor_post ? 'yes' : 'no' ) . ', ACF Image=' . ( $professor_image ? 'yes' : 'no' ) );
+    if ( $professor_data && isset( $professor_data['image'] ) && ! empty( $professor_data['image'] ) ) {
+        return $professor_data['image'];
     }
     
     // 画像が存在しない場合はnullを返す（アイコンが表示される）
     return null;
 }
+
+/**
+ * JSON-LD構造化データを出力
+ */
+function nfu_output_json_ld() {
+    if ( ! is_singular() ) {
+        return;
+    }
+    
+    global $post;
+    
+    // 論文ページの場合
+    if ( is_singular( 'papers' ) ) {
+        $original_title = nfu_get_field( 'original_title' );
+        $authors = nfu_get_field( 'authors' );
+        $published_year = nfu_get_field( 'published_year' );
+        $journal = nfu_get_field( 'journal' );
+        $doi_link = nfu_get_field( 'doi_link' );
+        $summary_points = nfu_get_field( 'summary_points' );
+        
+        $json_ld = array(
+            '@context' => 'https://schema.org',
+            '@type' => 'ScholarlyArticle',
+            'headline' => get_the_title(),
+            'description' => wp_trim_words( get_the_excerpt() ?: get_the_content(), 30, '...' ),
+            'datePublished' => get_the_date( 'c' ),
+            'dateModified' => get_the_modified_date( 'c' ),
+            'author' => array(
+                '@type' => 'Organization',
+                'name' => get_bloginfo( 'name' )
+            ),
+            'publisher' => array(
+                '@type' => 'Organization',
+                'name' => get_bloginfo( 'name' ),
+                'logo' => array(
+                    '@type' => 'ImageObject',
+                    'url' => NFU_THEME_URI . '/assets/images/nfu_logo.svg'
+                )
+            ),
+            'mainEntityOfPage' => array(
+                '@type' => 'WebPage',
+                '@id' => get_permalink()
+            )
+        );
+        
+        // 原題がある場合
+        if ( $original_title ) {
+            $json_ld['alternateName'] = $original_title;
+        }
+        
+        // 著者情報
+        if ( $authors ) {
+            $author_list = array();
+            $author_names = explode( "\n", $authors );
+            foreach ( $author_names as $author_name ) {
+                $author_name = trim( $author_name );
+                if ( $author_name ) {
+                    $author_list[] = array(
+                        '@type' => 'Person',
+                        'name' => $author_name
+                    );
+                }
+            }
+            if ( ! empty( $author_list ) ) {
+                $json_ld['author'] = count( $author_list ) === 1 ? $author_list[0] : $author_list;
+            }
+        }
+        
+        // 発表年
+        if ( $published_year ) {
+            $json_ld['datePublished'] = $published_year . '-01-01';
+        }
+        
+        // 掲載誌
+        if ( $journal ) {
+            $json_ld['isPartOf'] = array(
+                '@type' => 'PublicationVolume',
+                'isPartOf' => array(
+                    '@type' => 'Periodical',
+                    'name' => $journal
+                )
+            );
+        }
+        
+        // DOIリンク
+        if ( $doi_link ) {
+            $json_ld['identifier'] = array(
+                '@type' => 'PropertyValue',
+                'propertyID' => 'DOI',
+                'value' => $doi_link
+            );
+        }
+        
+        // 画像
+        if ( has_post_thumbnail() ) {
+            $thumbnail_id = get_post_thumbnail_id();
+            $thumbnail_url = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+            if ( $thumbnail_url ) {
+                $json_ld['image'] = array(
+                    '@type' => 'ImageObject',
+                    'url' => $thumbnail_url[0],
+                    'width' => $thumbnail_url[1],
+                    'height' => $thumbnail_url[2]
+                );
+            }
+        }
+        
+        echo '<script type="application/ld+json">' . "\n";
+        echo wp_json_encode( $json_ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT );
+        echo "\n" . '</script>' . "\n";
+    }
+    
+    // 講座ページの場合
+    if ( is_singular( 'lectures' ) ) {
+        $lecture_status = nfu_get_field( 'lecture_status' );
+        $main_professor = nfu_get_field( 'main_professor' );
+        $lecture_overview = nfu_get_field( 'lecture_overview' );
+        $total_episodes = nfu_get_field( 'total_episodes' ) ?: 5;
+        
+        // 講師情報を取得
+        $professor_data = nfu_get_professor_by_id( $main_professor );
+        $professor_name = $professor_data ? $professor_data['name'] : '';
+        
+        $json_ld = array(
+            '@context' => 'https://schema.org',
+            '@type' => 'Course',
+            'name' => get_the_title(),
+            'description' => $lecture_overview ?: wp_trim_words( get_the_excerpt() ?: get_the_content(), 50, '...' ),
+            'provider' => array(
+                '@type' => 'Organization',
+                'name' => get_bloginfo( 'name' ),
+                'url' => home_url( '/' ),
+                'logo' => array(
+                    '@type' => 'ImageObject',
+                    'url' => NFU_THEME_URI . '/assets/images/nfu_logo.svg'
+                )
+            ),
+            'url' => get_permalink(),
+            'courseCode' => 'LECTURE-' . get_the_ID()
+        );
+        
+        // 講師情報
+        if ( $professor_name ) {
+            $json_ld['instructor'] = array(
+                '@type' => 'Person',
+                'name' => $professor_name
+            );
+        }
+        
+        // エピソード数
+        if ( $total_episodes ) {
+            $json_ld['numberOfCredits'] = array(
+                '@type' => 'Integer',
+                'value' => $total_episodes
+            );
+        }
+        
+        // ステータス
+        if ( $lecture_status ) {
+            $json_ld['courseMode'] = $lecture_status === '開講中' ? 'https://schema.org/Online' : 'https://schema.org/Offline';
+        }
+        
+        // 画像
+        if ( has_post_thumbnail() ) {
+            $thumbnail_id = get_post_thumbnail_id();
+            $thumbnail_url = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+            if ( $thumbnail_url ) {
+                $json_ld['image'] = array(
+                    '@type' => 'ImageObject',
+                    'url' => $thumbnail_url[0],
+                    'width' => $thumbnail_url[1],
+                    'height' => $thumbnail_url[2]
+                );
+            }
+        }
+        
+        // カテゴリ
+        $themes = get_the_terms( get_the_ID(), 'theme_category' );
+        if ( $themes && ! is_wp_error( $themes ) ) {
+            $keywords = array();
+            foreach ( $themes as $theme ) {
+                $keywords[] = $theme->name;
+            }
+            if ( ! empty( $keywords ) ) {
+                $json_ld['keywords'] = implode( ', ', $keywords );
+            }
+        }
+        
+        echo '<script type="application/ld+json">' . "\n";
+        echo wp_json_encode( $json_ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT );
+        echo "\n" . '</script>' . "\n";
+    }
+}
+add_action( 'wp_head', 'nfu_output_json_ld', 5 );
 
 /**
  * カスタムナビゲーションウォーカー

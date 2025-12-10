@@ -111,7 +111,7 @@ function nfu_character_dialogue( $character, $message, $position = 'left' ) {
             <?php 
             $professor_image = nfu_get_professor_image($character);
             if ($professor_image) : ?>
-                <img src="<?php echo esc_url($professor_image); ?>" alt="<?php echo esc_attr($char['name']); ?>" class="w-full h-full object-cover">
+                <img src="<?php echo esc_url($professor_image); ?>" alt="<?php echo esc_attr($char['name']); ?>" class="w-full h-full object-cover" loading="lazy">
             <?php else : ?>
                 <span class="text-2xl"><?php echo $char['icon']; ?></span>
             <?php endif; ?>
@@ -130,7 +130,7 @@ function nfu_character_dialogue( $character, $message, $position = 'left' ) {
                 </div>
                 
                 <div class="dialogue-text <?php echo $position === 'right' ? 'text-gray-800' : 'text-black'; ?> leading-relaxed text-base">
-                    <?php echo wpautop( $message ); ?>
+                    <?php echo wpautop( wp_kses_post( $message ) ); ?>
                 </div>
             </div>
         </div>

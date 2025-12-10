@@ -12,7 +12,8 @@
         <?php if ( isset($professor['image']) && $professor['image'] ) : ?>
             <img src="<?php echo esc_url($professor['image']); ?>" 
                  alt="<?php echo esc_attr($professor['name']); ?>" 
-                 class="w-full h-full object-cover">
+                 class="w-full h-full object-cover"
+                 loading="lazy">
         <?php else : ?>
             <div class="w-full h-full flex items-center justify-center">
                 <i class="fas fa-cat text-6xl text-gray-400"></i>

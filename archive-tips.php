@@ -305,59 +305,101 @@ get_header(); ?>
 </style>
 
 <script>
-jQuery(document).ready(function($) {
-    // フィルター機能
-    function filterTips() {
-        var category = $('#category-filter').val();
-        var difficulty = $('#difficulty-filter').val();
-        var search = $('#search-input').val().toLowerCase();
-        
-        $('.tip-card').each(function() {
-            var card = $(this);
-            var cardCategory = card.find('.bg-yellow-100').text().trim();
-            var cardDifficulty = card.find('.bg-blue-100').text().trim();
-            var cardTitle = card.find('h3 a').text().toLowerCase();
-            var cardContent = card.find('p').text().toLowerCase();
-            
-            var showCard = true;
-            
-            // カテゴリフィルター
-            if (category && cardCategory !== category) {
-                showCard = false;
-            }
-            
-            // 難易度フィルター
-            if (difficulty && cardDifficulty !== difficulty) {
-                showCard = false;
-            }
-            
-            // 検索フィルター
-            if (search && !cardTitle.includes(search) && !cardContent.includes(search)) {
-                showCard = false;
-            }
-            
-            if (showCard) {
-                card.show();
-            } else {
-                card.hide();
-            }
-        });
-        
-        // 結果が0件の場合のメッセージ表示
-        var visibleCards = $('.tip-card:visible').length;
-        if (visibleCards === 0) {
-            if ($('#no-results').length === 0) {
-                $('#tips-grid').after('<div id="no-results" class="text-center py-16"><p class="text-gray-600">条件に一致する豆知識が見つかりませんでした。</p></div>');
-            }
-        } else {
-            $('#no-results').remove();
-        }
+(function() {
+    'use strict';
+    
+    // DOMContentLoadedイベントで初期化
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
     }
     
-    // イベントリスナー
-    $('#category-filter, #difficulty-filter').on('change', filterTips);
-    $('#search-input').on('input', filterTips);
-});
+    function init() {
+        // フィルター機能
+        function filterTips() {
+            var categoryFilter = document.getElementById('category-filter');
+            var difficultyFilter = document.getElementById('difficulty-filter');
+            var searchInput = document.getElementById('search-input');
+            
+            var category = categoryFilter ? categoryFilter.value : '';
+            var difficulty = difficultyFilter ? difficultyFilter.value : '';
+            var search = searchInput ? searchInput.value.toLowerCase() : '';
+            
+            var tipCards = document.querySelectorAll('.tip-card');
+            var visibleCount = 0;
+            
+            tipCards.forEach(function(card) {
+                var cardCategoryEl = card.querySelector('.bg-yellow-100');
+                var cardDifficultyEl = card.querySelector('.bg-blue-100');
+                var cardTitleEl = card.querySelector('h3 a');
+                var cardContentEl = card.querySelector('p');
+                
+                var cardCategory = cardCategoryEl ? cardCategoryEl.textContent.trim() : '';
+                var cardDifficulty = cardDifficultyEl ? cardDifficultyEl.textContent.trim() : '';
+                var cardTitle = cardTitleEl ? cardTitleEl.textContent.toLowerCase() : '';
+                var cardContent = cardContentEl ? cardContentEl.textContent.toLowerCase() : '';
+                
+                var showCard = true;
+                
+                // カテゴリフィルター
+                if (category && cardCategory !== category) {
+                    showCard = false;
+                }
+                
+                // 難易度フィルター
+                if (difficulty && cardDifficulty !== difficulty) {
+                    showCard = false;
+                }
+                
+                // 検索フィルター
+                if (search && !cardTitle.includes(search) && !cardContent.includes(search)) {
+                    showCard = false;
+                }
+                
+                if (showCard) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // 結果が0件の場合のメッセージ表示
+            var tipsGrid = document.getElementById('tips-grid');
+            var noResults = document.getElementById('no-results');
+            
+            if (visibleCount === 0) {
+                if (!noResults && tipsGrid) {
+                    var noResultsDiv = document.createElement('div');
+                    noResultsDiv.id = 'no-results';
+                    noResultsDiv.className = 'text-center py-16';
+                    noResultsDiv.innerHTML = '<p class="text-gray-600">条件に一致する豆知識が見つかりませんでした。</p>';
+                    tipsGrid.parentNode.insertBefore(noResultsDiv, tipsGrid.nextSibling);
+                }
+            } else {
+                if (noResults) {
+                    noResults.remove();
+                }
+            }
+        }
+        
+        // イベントリスナー
+        var categoryFilter = document.getElementById('category-filter');
+        var difficultyFilter = document.getElementById('difficulty-filter');
+        var searchInput = document.getElementById('search-input');
+        
+        if (categoryFilter) {
+            categoryFilter.addEventListener('change', filterTips);
+        }
+        if (difficultyFilter) {
+            difficultyFilter.addEventListener('change', filterTips);
+        }
+        if (searchInput) {
+            searchInput.addEventListener('input', filterTips);
+        }
+    }
+})();
 </script>
 
 <?php get_footer(); ?>

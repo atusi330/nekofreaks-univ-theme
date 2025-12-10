@@ -36,7 +36,8 @@
                         <div class="w-64 h-64 rounded-full overflow-hidden shadow-2xl border-4 border-white">
                             <img src="<?php echo esc_url($professor_image); ?>" 
                                  alt="<?php echo esc_attr($professor_name); ?>" 
-                                 class="w-full h-full object-cover">
+                                 class="w-full h-full object-cover"
+                                 loading="lazy">
                         </div>
                     <?php else : ?>
                         <div class="w-64 h-64 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center shadow-2xl border-4 border-white">

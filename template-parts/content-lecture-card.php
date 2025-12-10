@@ -79,7 +79,8 @@ $progress = nfu_get_lecture_progress( get_the_ID() );
             <?php endif; ?>
             
             <button class="favorite-button text-gray-400 hover:text-red-500 transition-colors" 
-                    data-lecture-id="<?php echo get_the_ID(); ?>">
+                    data-lecture-id="<?php echo get_the_ID(); ?>"
+                    data-lecture-title="<?php echo esc_attr(get_the_title()); ?>">
                 <span class="favorite-icon">🤍</span>
             </button>
         </div>

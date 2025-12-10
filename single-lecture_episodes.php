@@ -297,10 +297,10 @@ if ($key_points) {
                         
                         <button 
                             class="episode-complete-button bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
-                            data-episode-id="<?php echo get_the_ID(); ?>"
-                            data-episode-number="<?php echo $episode_number; ?>"
-                            data-lecture-id="<?php echo $parent_lecture; ?>"
-                            data-total-episodes="<?php echo $total_episodes; ?>"
+                            data-episode-id="<?php echo esc_attr(get_the_ID()); ?>"
+                            data-episode-number="<?php echo esc_attr($episode_number); ?>"
+                            data-lecture-id="<?php echo esc_attr($parent_lecture ? $parent_lecture : ''); ?>"
+                            data-total-episodes="<?php echo esc_attr($total_episodes); ?>"
                             id="complete-btn-<?php echo get_the_ID(); ?>"
                         >
                             <i class="fas fa-check-circle mr-2"></i>
@@ -464,7 +464,7 @@ if ($key_points) {
                         </a>
                         
                         <?php if ($episode_number < $total_episodes) : ?>
-                            <button class="bookmark-episode-button w-full text-gray-600 hover:text-blue-600 py-2 transition-colors flex items-center justify-center" data-episode-id="<?php echo get_the_ID(); ?>" data-episode-number="<?php echo $episode_number; ?>" data-lecture-id="<?php echo $parent_lecture; ?>">
+                            <button class="bookmark-episode-button w-full text-gray-600 hover:text-blue-600 py-2 transition-colors flex items-center justify-center" data-episode-id="<?php echo esc_attr(get_the_ID()); ?>" data-episode-number="<?php echo esc_attr($episode_number); ?>" data-lecture-id="<?php echo esc_attr($parent_lecture ? $parent_lecture : ''); ?>">
                                 <i class="fas fa-bookmark mr-2"></i>続きから再生に設定
                             </button>
                         <?php endif; ?>

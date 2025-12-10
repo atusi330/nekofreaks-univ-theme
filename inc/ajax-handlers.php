@@ -284,22 +284,113 @@ function nfu_get_lecture_data_ajax() {
         wp_die('Security check failed');
     }
     
-    $lecture_ids = isset($_POST['lecture_ids']) ? $_POST['lecture_ids'] : array();
+    $lecture_ids_raw = isset($_POST['lecture_ids']) ? $_POST['lecture_ids'] : '';
+    
+    // デバッグ用ログ（開発環境のみ）
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('NFU: get_lecture_data - Raw input: ' . print_r($lecture_ids_raw, true));
+        error_log('NFU: get_lecture_data - Input type: ' . gettype($lecture_ids_raw));
+    }
+    
+    // JSON文字列の場合はデコード
+    if (is_string($lecture_ids_raw)) {
+        $lecture_ids = json_decode($lecture_ids_raw, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            // JSONデコードに失敗した場合は、カンマ区切りの文字列として処理
+            $lecture_ids = array_filter(array_map('trim', explode(',', $lecture_ids_raw)));
+        }
+    } else {
+        $lecture_ids = $lecture_ids_raw;
+    }
+    
+    // 配列でない場合は配列に変換
+    if (!is_array($lecture_ids)) {
+        if (is_string($lecture_ids) && !empty($lecture_ids)) {
+            $lecture_ids = array($lecture_ids);
+        } else {
+            wp_send_json_error('No lecture IDs provided or invalid format');
+        }
+    }
     
     if (empty($lecture_ids)) {
         wp_send_json_error('No lecture IDs provided');
     }
     
+    // 配列の各要素を正規化（ネストされた配列をフラット化）
+    $normalized_ids = array();
+    foreach ($lecture_ids as $id) {
+        if (is_array($id)) {
+            // ネストされた配列の場合は最初の要素を取得
+            $normalized_ids = array_merge($normalized_ids, array_values($id));
+        } else {
+            $normalized_ids[] = $id;
+        }
+    }
+    $lecture_ids = array_values(array_filter($normalized_ids));
+    
+    // デバッグ用ログ（開発環境のみ）
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('NFU: get_lecture_data - Processed IDs: ' . print_r($lecture_ids, true));
+    }
+    
     $lecture_data = array();
     
-    foreach ($lecture_ids as $lecture_id) {
+    foreach ($lecture_ids as $index => $lecture_id) {
+        // デバッグ用ログ
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('NFU: Processing lecture ID - Index: ' . $index . ', Value: ' . print_r($lecture_id, true) . ', Type: ' . gettype($lecture_id));
+        }
+        
+        // 講座IDを正規化
+        // 配列が文字列化されている場合の処理
+        if (is_array($lecture_id)) {
+            $lecture_id = !empty($lecture_id) ? reset($lecture_id) : '';
+        }
+        
+        // 文字列がJSON配列の場合の処理（例: '["8"]'）
+        if (is_string($lecture_id) && preg_match('/^\[.*\]$/', $lecture_id)) {
+            $decoded = json_decode($lecture_id, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded) && !empty($decoded)) {
+                $lecture_id = reset($decoded);
+            }
+        }
+        
+        // 文字列から数値を抽出（例: '["8"]' から '8' を抽出）
+        if (is_string($lecture_id)) {
+            // JSON配列文字列から数値を抽出
+            if (preg_match('/\[["\']?(\d+)["\']?\]/', $lecture_id, $matches)) {
+                $lecture_id = $matches[1];
+            }
+            // 数値文字列を抽出
+            elseif (preg_match('/(\d+)/', $lecture_id, $matches)) {
+                $lecture_id = $matches[1];
+            }
+        }
+        
+        // 講座IDを正規化（数値の場合は整数に変換）
+        $lecture_id_original = trim((string)$lecture_id);
+        $lecture_id_numeric = is_numeric($lecture_id_original) ? intval($lecture_id_original) : null;
+        
+        // 空の場合はスキップ
+        if (empty($lecture_id_original) || $lecture_id_numeric === null) {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('NFU: Skipping invalid lecture ID: ' . print_r($lecture_id, true));
+            }
+            continue;
+        }
+        
+        // デバッグ用ログ
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('NFU: Normalized lecture ID - Original: ' . $lecture_id_original . ', Numeric: ' . $lecture_id_numeric);
+        }
+        
         // 講座IDから投稿を検索（複数の方法を試す）
         $lecture = null;
         
-        // 方法1: 投稿IDとして直接検索
-        if (is_numeric($lecture_id)) {
-            $lecture = get_post($lecture_id);
-            if ($lecture && $lecture->post_type === 'lectures') {
+        // 方法1: 投稿IDとして直接検索（数値の場合）
+        if ($lecture_id_numeric !== null) {
+            $lecture = get_post($lecture_id_numeric);
+            if ($lecture && $lecture->post_type === 'lectures' && $lecture->post_status === 'publish') {
                 // 投稿が見つかった
             } else {
                 $lecture = null;
@@ -311,7 +402,7 @@ function nfu_get_lecture_data_ajax() {
             $args = array(
                 'post_type' => 'lectures',
                 'post_status' => 'publish',
-                'name' => $lecture_id,
+                'name' => sanitize_title($lecture_id),
                 'posts_per_page' => 1
             );
             $lectures = get_posts($args);
@@ -341,26 +432,80 @@ function nfu_get_lecture_data_ajax() {
         }
         
         if ($lecture) {
-            $lecture_data[$lecture_id] = array(
+            // 元のID（文字列または数値）をキーとして使用
+            // 数値の場合は数値キーと文字列キーの両方で保存
+            $lecture_info = array(
                 'title' => get_the_title($lecture->ID),
                 'url' => get_permalink($lecture->ID),
                 'total_episodes' => get_field('total_episodes', $lecture->ID) ?: 5,
                 'main_professor' => get_field('main_professor', $lecture->ID),
                 'lecture_status' => get_field('lecture_status', $lecture->ID)
             );
+            
+            // 数値キーを優先（JavaScript側で数値で検索することが多いため）
+            $lecture_data[$lecture_id_numeric] = $lecture_info;
+            $lecture_data[(string)$lecture_id_numeric] = $lecture_info; // 文字列キーも追加
+            
+            // デバッグ用ログ
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('NFU: Lecture found - ID: ' . $lecture->ID . ', Title: ' . $lecture_info['title'] . ', Keys added: ' . $lecture_id_numeric . ', ' . (string)$lecture_id_numeric);
+            }
         } else {
-            // 見つからない場合はデフォルトデータ
-            $lecture_data[$lecture_id] = array(
-                'title' => '講座 #' . $lecture_id,
-                'url' => '/lectures/' . $lecture_id . '/',
+            // 見つからない場合はデフォルトデータ（数値IDを使用）
+            $lecture_info = array(
+                'title' => '講座 #' . $lecture_id_numeric,
+                'url' => '/lectures/' . $lecture_id_numeric . '/',
                 'total_episodes' => 5,
                 'main_professor' => 'maron',
                 'lecture_status' => '開講中'
             );
+            
+            // 数値キーを優先
+            $lecture_data[$lecture_id_numeric] = $lecture_info;
+            $lecture_data[(string)$lecture_id_numeric] = $lecture_info; // 文字列キーも追加
+            
+            // デバッグ用ログ
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('NFU: Lecture not found for ID: ' . $lecture_id_numeric . ' - Using default data');
+            }
         }
     }
     
-    wp_send_json_success($lecture_data);
+    // デバッグ用ログ（開発環境のみ）
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('NFU: Final lecture data keys: ' . print_r(array_keys($lecture_data), true));
+        error_log('NFU: Final lecture data: ' . print_r($lecture_data, true));
+    }
+    
+    // JSONエンコード時にキーが文字列化される問題を回避するため、
+    // レスポンスデータを再構築して確実に数値キーと文字列キーの両方を含める
+    $response_data = array();
+    foreach ($lecture_data as $key => $value) {
+        // キーを正規化（数値キーのみを処理）
+        if (is_numeric($key)) {
+            $num_key = intval($key);
+            $str_key = (string)$num_key;
+            $response_data[$num_key] = $value;
+            $response_data[$str_key] = $value;
+        } else {
+            // 文字列キーの場合、数値を抽出して試す
+            if (preg_match('/(\d+)/', $key, $matches)) {
+                $num_key = intval($matches[1]);
+                $str_key = (string)$num_key;
+                $response_data[$num_key] = $value;
+                $response_data[$str_key] = $value;
+            } else {
+                $response_data[$key] = $value;
+            }
+        }
+    }
+    
+    // デバッグ用ログ（開発環境のみ）
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('NFU: Response data keys: ' . print_r(array_keys($response_data), true));
+    }
+    
+    wp_send_json_success($response_data);
 }
 add_action('wp_ajax_get_lecture_data', 'nfu_get_lecture_data_ajax');
 add_action('wp_ajax_nopriv_get_lecture_data', 'nfu_get_lecture_data_ajax');

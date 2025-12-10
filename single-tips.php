@@ -141,7 +141,8 @@ get_header(); ?>
                                             if ($professor_image) : ?>
                                                 <img src="<?php echo esc_url($professor_image); ?>" 
                                                      alt="<?php echo esc_attr($speaker_name); ?>" 
-                                                     class="w-full h-full object-cover">
+                                                     class="w-full h-full object-cover"
+                                                     loading="lazy">
                                             <?php else : ?>
                                                 <i class="<?php echo esc_attr($speaker_icon); ?> text-2xl text-gray-600"></i>
                                             <?php endif; ?>
@@ -163,7 +164,7 @@ get_header(); ?>
                                             </div>
                                             
                                                                                             <div class="dialogue-text <?php echo $is_left ? 'text-black' : 'text-gray-800'; ?> leading-relaxed text-base <?php echo $is_left ? '' : 'text-justify'; ?>">
-                                                    <?php echo wpautop(esc_html($message_text)); ?>
+                                                    <?php echo wpautop(wp_kses_post($message_text)); ?>
                                                 </div>
                                         </div>
                                         </div>
