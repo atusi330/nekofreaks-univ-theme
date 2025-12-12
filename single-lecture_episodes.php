@@ -225,6 +225,29 @@ if ($key_points) {
                     </section>
                 <?php endif; ?>
                 
+                <!-- マロン学長からのお願い -->
+                <section class="maron-request bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-heart text-pink-600 mr-2"></i>
+                        マロン学長からのお願い
+                    </h2>
+                    <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+                        <!-- 左側：画像 -->
+                        <div class="flex-shrink-0 rounded-full overflow-hidden" style="width: 5rem; height: 5rem;">
+                            <img src="<?php echo NFU_THEME_URI . '/assets/images/maron_please.png'; ?>" 
+                                 alt="マロン学長からのお願い" 
+                                 class="object-cover rounded-full" style="width: 5rem; height: 5rem;">
+                        </div>
+                        <!-- 右側：文章 -->
+                        <div class="flex-1">
+                            <p class="text-gray-700 leading-relaxed text-base md:text-lg">
+                                僕たちは獣医さんじゃないから、論文や専門書を読んで勉強したことをみんなとシェアしているんだよ。<br>
+                                だから、猫ちゃんの健康で心配なことがあったら、必ず動物病院で診てもらってね！
+                            </p>
+                        </div>
+                    </div>
+                </section>
+                
                 <!-- 本文コンテンツ -->
                 <section class="episode-content bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">

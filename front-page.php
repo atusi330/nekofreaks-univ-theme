@@ -352,10 +352,10 @@ get_header(); ?>
                     </div>
                 </div>
                 
-                <!-- グッズ紹介 -->
+                <!-- おすすめの商品紹介 -->
                 <div class="goods-column">
                     <h3 class="text-2xl font-bold mb-6">
-                        今週のおすすめグッズ
+                        最新のおすすめ商品
                     </h3>
                     
                     <div class="goods-list space-y-4">
@@ -370,7 +370,7 @@ get_header(); ?>
                                 $price = nfu_get_field('price');
                                 $is_recommended = nfu_get_field('is_recommended');
                         ?>
-                            <!-- グッズカード -->
+                            <!-- おすすめの商品カード -->
                             <article class="goods-card bg-purple-50 rounded-lg p-4 flex gap-4">
                                 <?php if ( has_post_thumbnail() ) : ?>
                                     <?php the_post_thumbnail('thumbnail', array('class' => 'w-24 h-24 object-cover rounded')); ?>
@@ -400,7 +400,7 @@ get_header(); ?>
                         <?php 
                             endwhile;
                         else : ?>
-                            <p class="text-gray-600">グッズはまだありません。</p>
+                            <p class="text-gray-600">おすすめの商品はまだありません。</p>
                         <?php endif;
                         wp_reset_postdata();
                         ?>
