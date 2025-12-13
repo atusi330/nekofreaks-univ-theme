@@ -165,7 +165,7 @@ get_header(); ?>
                             <i class="fas fa-heart mr-2"></i>お気に入り
                         </a>
                         <a href="<?php echo home_url('/goods/'); ?>" class="text-blue-600 hover:text-blue-800 hover:underline flex items-center">
-                            <i class="fas fa-shopping-bag mr-2"></i>グッズ
+                            <i class="fas fa-shopping-bag mr-2"></i>おすすめの商品
                         </a>
                     </div>
                 </div>

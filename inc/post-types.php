@@ -137,20 +137,20 @@ function nfu_register_post_types() {
         'show_in_rest'        => true,
     ) );
     
-    // グッズ（goods）
+    // おすすめの商品（goods）
     register_post_type( 'goods', array(
         'labels' => array(
-            'name'               => 'グッズ',
-            'singular_name'      => 'グッズ',
+            'name'               => 'おすすめの商品',
+            'singular_name'      => 'おすすめの商品',
             'add_new'            => '新規追加',
-            'add_new_item'       => '新規グッズを追加',
-            'edit_item'          => 'グッズを編集',
-            'new_item'           => '新規グッズ',
-            'view_item'          => 'グッズを表示',
-            'search_items'       => 'グッズを検索',
-            'not_found'          => 'グッズが見つかりません',
-            'not_found_in_trash' => 'ゴミ箱にグッズはありません',
-            'menu_name'          => 'グッズ',
+            'add_new_item'       => '新規おすすめの商品を追加',
+            'edit_item'          => 'おすすめの商品を編集',
+            'new_item'           => '新規おすすめの商品',
+            'view_item'          => 'おすすめの商品を表示',
+            'search_items'       => 'おすすめの商品を検索',
+            'not_found'          => 'おすすめの商品が見つかりません',
+            'not_found_in_trash' => 'ゴミ箱におすすめの商品はありません',
+            'menu_name'          => 'おすすめの商品',
         ),
         'public'              => true,
         'publicly_queryable'  => true,

@@ -75,7 +75,7 @@
                             echo '<li><a href="' . home_url('/lectures/') . '" class="block text-gray-700 hover:text-blue-600 transition-colors py-2 md:py-0"><i class="fas fa-graduation-cap"></i>講座一覧</a></li>';
                             echo '<li><a href="' . home_url('/papers/') . '" class="block text-gray-700 hover:text-blue-600 transition-colors py-2 md:py-0"><i class="fas fa-file-alt"></i>論文アーカイブ</a></li>';
                             echo '<li><a href="' . home_url('/tips/') . '" class="block text-gray-700 hover:text-blue-600 transition-colors py-2 md:py-0"><i class="fas fa-lightbulb"></i>豆知識バンク</a></li>';
-                            echo '<li><a href="' . home_url('/goods/') . '" class="block text-gray-700 hover:text-blue-600 transition-colors py-2 md:py-0"><i class="fas fa-shopping-bag"></i>グッズ</a></li>';
+                            echo '<li><a href="' . home_url('/goods/') . '" class="block text-gray-700 hover:text-blue-600 transition-colors py-2 md:py-0"><i class="fas fa-shopping-bag"></i>おすすめの商品</a></li>';
                             echo '<li><a href="' . home_url('/bookmarks/') . '" class="block text-gray-700 hover:text-purple-600 transition-colors py-2 md:py-0 flex items-center"><i class="fas fa-heart text-purple-500 mr-1"></i>お気に入り</a></li>';
                             echo '<li><a href="' . home_url('/about/') . '" class="block text-gray-700 hover:text-blue-600 transition-colors py-2 md:py-0"><i class="fas fa-info-circle"></i>大学について</a></li>';
                             echo '</ul>';

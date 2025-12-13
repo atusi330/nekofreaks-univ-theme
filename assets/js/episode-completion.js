@@ -211,8 +211,8 @@
         var viewCertButton = modal.querySelector('#view-certificate');
         if (viewCertButton) {
             viewCertButton.addEventListener('click', function() {
-                // 修了証ページへリダイレクト（実装予定）
-                window.location.href = '/certificate/?lecture_id=' + lectureId;
+                // 修了証ページへリダイレクト
+                window.location.href = '/certificate/';
             });
         }
         

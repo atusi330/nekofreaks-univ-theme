@@ -350,10 +350,10 @@ function nfu_register_acf_field_groups() {
         'instruction_placement' => 'label',
     ) );
     
-    // グッズ（goods）用フィールド
+    // おすすめの商品（goods）用フィールド
     acf_add_local_field_group( array(
         'key' => 'group_goods',
-        'title' => 'グッズ情報',
+        'title' => 'おすすめの商品情報',
         'fields' => array(
             array(
                 'key' => 'field_price',

@@ -122,7 +122,7 @@
                                 <li><a href="<?php echo home_url('/lectures/'); ?>" class="text-sm text-gray-400 hover:text-white transition-colors"><i class="fas fa-book mr-1"></i>講座一覧</a></li>
                                 <li><a href="<?php echo home_url('/papers/'); ?>" class="text-sm text-gray-400 hover:text-white transition-colors"><i class="fas fa-file-alt mr-1"></i>論文アーカイブ</a></li>
                                 <li><a href="<?php echo home_url('/tips/'); ?>" class="text-sm text-gray-400 hover:text-white transition-colors"><i class="fas fa-lightbulb mr-1"></i>豆知識バンク</a></li>
-                                <li><a href="<?php echo home_url('/goods/'); ?>" class="text-sm text-gray-400 hover:text-white transition-colors"><i class="fas fa-shopping-bag mr-1"></i>グッズ</a></li>
+                                <li><a href="<?php echo home_url('/goods/'); ?>" class="text-sm text-gray-400 hover:text-white transition-colors"><i class="fas fa-shopping-bag mr-1"></i>おすすめの商品</a></li>
                             </ul>
                             <ul class="space-y-2">
                                 <li><a href="<?php echo home_url('/about/'); ?>" class="text-sm text-gray-400 hover:text-white transition-colors"><i class="fas fa-users mr-1"></i>大学について</a></li>
