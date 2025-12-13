@@ -129,9 +129,17 @@ get_header(); ?>
             <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); 
                 $tip_category = nfu_get_field('tip_category');
                 $tip_difficulty = nfu_get_field('tip_difficulty');
-                $related_lecture = nfu_get_field('related_lecture');
-                $related_episode = nfu_get_field('related_episode');
+                $related_lecture = nfu_get_field('tip_related_lecture');
+                $related_episode = nfu_get_field('tip_related_episode');
                 $tip_chat_data = nfu_get_field('tip_chat_data');
+                
+                // オブジェクトかIDかをチェックして正規化
+                if ($related_lecture && !is_object($related_lecture)) {
+                    $related_lecture = get_post($related_lecture);
+                }
+                if ($related_episode && !is_object($related_episode)) {
+                    $related_episode = get_post($related_episode);
+                }
                 
                 // カテゴリ名を取得
                 $category_names = array(
@@ -203,7 +211,7 @@ get_header(); ?>
                             <div class="mb-4">
                                 <div class="text-xs text-gray-500 mb-2">関連コンテンツ:</div>
                                 <div class="flex flex-wrap gap-2">
-                                    <?php if ($related_lecture) : ?>
+                                    <?php if ($related_lecture && is_object($related_lecture)) : ?>
                                         <a href="<?php echo get_permalink($related_lecture->ID); ?>" 
                                            class="inline-flex items-center bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs hover:bg-purple-200 transition-colors">
                                             <i class="fas fa-book mr-1"></i>
@@ -211,7 +219,7 @@ get_header(); ?>
                                         </a>
                                     <?php endif; ?>
                                     
-                                    <?php if ($related_episode) : ?>
+                                    <?php if ($related_episode && is_object($related_episode)) : ?>
                                         <a href="<?php echo get_permalink($related_episode->ID); ?>" 
                                            class="inline-flex items-center bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs hover:bg-blue-200 transition-colors">
                                             <i class="fas fa-play mr-1"></i>

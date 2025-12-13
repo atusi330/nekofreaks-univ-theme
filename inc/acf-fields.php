@@ -284,11 +284,12 @@ function nfu_register_acf_field_groups() {
                     'care' => 'ケア',
                     'trivia' => 'トリビア',
                 ),
+                'default_value' => 'health',
             ),
             array(
-                'key' => 'field_related_lecture',
+                'key' => 'field_tip_related_lecture', // ← キー変更
                 'label' => '関連講座',
-                'name' => 'related_lecture',
+                'name' => 'tip_related_lecture', // ← name も変更
                 'type' => 'post_object',
                 'post_type' => array( 'lectures' ),
                 'return_format' => 'object',
@@ -296,9 +297,9 @@ function nfu_register_acf_field_groups() {
                 'allow_null' => 1,
             ),
             array(
-                'key' => 'field_related_episode',
+                'key' => 'field_tip_related_episode', // ← キー変更
                 'label' => '関連講座回',
-                'name' => 'related_episode',
+                'name' => 'tip_related_episode', // ← name も変更
                 'type' => 'post_object',
                 'post_type' => array( 'lecture_episodes' ),
                 'return_format' => 'object',
@@ -311,15 +312,20 @@ function nfu_register_acf_field_groups() {
                 'label' => 'チャット形式データ',
                 'name' => 'tip_chat_data',
                 'type' => 'textarea',
-                'instructions' => 'JSON形式でチャット形式のデータを入力してください。例：{"messages": [{"speaker": "マロン学長", "message": "こんにちは！"}, {"speaker": "いち教授", "message": "今日は豆知識をお話しします"}]}',
+                'instructions' => 'JSON形式でチャット形式のデータを入力してください',
                 'rows' => 10,
+                'placeholder' => '{"messages": [{"speaker": "マロン学長", "message": "こんにちは！"}]}',
             ),
             array(
-                'key' => 'field_tip_source',
-                'label' => '情報源',
-                'name' => 'tip_source',
-                'type' => 'text',
-                'instructions' => '参考文献や情報源',
+                'key' => 'field_tip_related_paper',
+                'label' => '関連論文',
+                'name' => 'tip_related_paper',
+                'type' => 'post_object',
+                'post_type' => array( 'papers' ),
+                'return_format' => 'object',
+                'ui' => 1,
+                'allow_null' => 1,
+                'instructions' => 'この豆知識の出典となる論文を選択してください',
             ),
             array(
                 'key' => 'field_tip_difficulty',
@@ -348,6 +354,7 @@ function nfu_register_acf_field_groups() {
         'style' => 'default',
         'label_placement' => 'top',
         'instruction_placement' => 'label',
+        'active' => true,
     ) );
     
     // おすすめの商品（goods）用フィールド

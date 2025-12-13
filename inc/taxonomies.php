@@ -63,6 +63,8 @@ function nfu_register_taxonomies() {
             'query_var'         => true,
             'rewrite'           => array( 'slug' => 'professor' ),
             'show_in_rest'      => true,
+            'rest_base'         => 'professor-taxonomy',
+            'rest_controller_class' => 'WP_REST_Terms_Controller',
         )
     );
     

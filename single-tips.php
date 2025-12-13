@@ -16,11 +16,19 @@ get_header(); ?>
     <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); 
         // 豆知識情報を取得
         $tip_category = nfu_get_field('tip_category');
-        $related_lecture = nfu_get_field('related_lecture');
-        $related_episode = nfu_get_field('related_episode');
+        $related_lecture = nfu_get_field('tip_related_lecture');
+        $related_episode = nfu_get_field('tip_related_episode');
         $tip_chat_data = nfu_get_field('tip_chat_data');
-        $tip_source = nfu_get_field('tip_source');
+        $tip_related_paper = nfu_get_field('tip_related_paper');
         $tip_difficulty = nfu_get_field('tip_difficulty');
+        
+        // オブジェクトかIDかをチェックして正規化
+        if ($related_lecture && !is_object($related_lecture)) {
+            $related_lecture = get_post($related_lecture);
+        }
+        if ($related_episode && !is_object($related_episode)) {
+            $related_episode = get_post($related_episode);
+        }
         
         // カテゴリ名を取得
         $category_names = array(
@@ -194,28 +202,65 @@ get_header(); ?>
                         </div>
                     <?php endif; ?>
                     
-                    <!-- 通常のコンテンツ -->
-                    <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                            <i class="fas fa-info-circle text-green-500 mr-3"></i>
-                            詳細情報
-                        </h2>
-                        
-                        <div class="prose tip-content max-w-none">
-                            <?php the_content(); ?>
-                        </div>
-                    </div>
-                    
-                    <!-- 情報源 -->
-                    <?php if ($tip_source) : ?>
-                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 border-l-4 border-blue-400">
-                            <h3 class="text-lg font-bold text-gray-800 mb-3">
-                                <i class="fas fa-book text-blue-600 mr-2"></i>
-                                情報源・参考文献
-                            </h3>
-                            <p class="text-gray-700">
-                                <?php echo esc_html($tip_source); ?>
-                            </p>
+                    <!-- 出典 -->
+                    <?php if ($tip_related_paper) : 
+                        $paper_id = is_object($tip_related_paper) ? $tip_related_paper->ID : $tip_related_paper;
+                        $paper_title = get_the_title($paper_id);
+                        $paper_authors = nfu_get_field('authors', $paper_id);
+                        $paper_published_year = nfu_get_field('published_year', $paper_id);
+                        $paper_journal = nfu_get_field('journal', $paper_id);
+                        $paper_url = get_permalink($paper_id);
+                    ?>
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 border-l-4 border-blue-400 mb-8">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                <i class="fas fa-book text-blue-600 mr-3"></i>
+                                出典
+                            </h2>
+                            
+                            <div class="paper-reference space-y-4">
+                                <!-- 論文名 -->
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800 mb-2">
+                                        <a href="<?php echo esc_url($paper_url); ?>" 
+                                           class="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
+                                            <?php echo esc_html($paper_title); ?>
+                                        </a>
+                                    </h3>
+                                </div>
+                                
+                                <!-- 論文情報 -->
+                                <div class="paper-meta grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-700">
+                                    <?php if ($paper_authors) : ?>
+                                        <div class="flex items-start">
+                                            <span class="font-semibold mr-2 min-w-[60px]">著者:</span>
+                                            <span><?php echo esc_html($paper_authors); ?></span>
+                                        </div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($paper_published_year) : ?>
+                                        <div class="flex items-start">
+                                            <span class="font-semibold mr-2 min-w-[60px]">発表年:</span>
+                                            <span><?php echo esc_html($paper_published_year); ?>年</span>
+                                        </div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($paper_journal) : ?>
+                                        <div class="flex items-start md:col-span-2">
+                                            <span class="font-semibold mr-2 min-w-[60px]">掲載情報:</span>
+                                            <span><?php echo esc_html($paper_journal); ?></span>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                                
+                                <!-- 論文ページへのリンク -->
+                                <div class="pt-4 border-t border-blue-200">
+                                    <a href="<?php echo esc_url($paper_url); ?>" 
+                                       class="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                        <i class="fas fa-external-link-alt mr-2"></i>
+                                        該当の論文ページを見る
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     <?php endif; ?>
                     
@@ -278,7 +323,7 @@ get_header(); ?>
                                 </h3>
                                 
                                 <div class="space-y-4">
-                                    <?php if ($related_lecture) : ?>
+                                    <?php if ($related_lecture && is_object($related_lecture)) : ?>
                                         <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                                             <h4 class="font-semibold text-gray-800 mb-2">
                                                 <i class="fas fa-book text-purple-600 mr-2"></i>
@@ -294,7 +339,7 @@ get_header(); ?>
                                         </div>
                                     <?php endif; ?>
                                     
-                                    <?php if ($related_episode) : ?>
+                                    <?php if ($related_episode && is_object($related_episode)) : ?>
                                         <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                                             <h4 class="font-semibold text-gray-800 mb-2">
                                                 <i class="fas fa-play text-blue-600 mr-2"></i>
