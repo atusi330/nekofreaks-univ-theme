@@ -457,3 +457,25 @@ if ( ! class_exists( 'NFU_Footer_Walker' ) ) {
         }
     }
 }
+
+/**
+ * マーカーショートコード
+ * 使用例: [marker]マーカーを付けたいテキスト[/marker]
+ */
+function nfu_marker_shortcode( $atts, $content = null ) {
+    return '<mark class="nfu-marker">' . do_shortcode( $content ) . '</mark>';
+}
+add_shortcode( 'marker', 'nfu_marker_shortcode' );
+
+/**
+ * wp_kses_postで<mark>タグを許可
+ */
+function nfu_allow_mark_tag( $tags, $context ) {
+    if ( $context === 'post' ) {
+        $tags['mark'] = array(
+            'class' => true,
+        );
+    }
+    return $tags;
+}
+add_filter( 'wp_kses_allowed_html', 'nfu_allow_mark_tag', 10, 2 );

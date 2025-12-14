@@ -84,6 +84,19 @@ body {
   transform: translateY(-4px);
 }
 
+/* マーカースタイル */
+.nfu-marker,
+mark.nfu-marker {
+  background: linear-gradient(180deg, transparent 60%, #fef08a 60%);
+  padding: 0 2px;
+  font-weight: 500;
+  color: inherit;
+}
+
+.nfu-marker:hover {
+  background: linear-gradient(180deg, transparent 60%, #fde047 60%);
+}
+
 .paper-card .paper-thumbnail img {
   transition: transform 0.3s ease;
 }
