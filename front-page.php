@@ -20,7 +20,7 @@ get_header(); ?>
                 ネコフリークス大学
             </h1>
             <p class="text-xl text-white text-opacity-80 text-center mb-12">
-                論文から学ぶ、本格的な猫の知識
+                論文を読んで学ぶ、猫の知識
             </p>
             
             <!-- マロン学長のウェルカムメッセージ -->
@@ -482,7 +482,7 @@ get_header(); ?>
             </h2>
             
             <p class="text-xl text-center mb-12 max-w-3xl mx-auto">
-                論文×AI×猫好きの想いで作った、信頼できる猫情報メディアです
+                論文×AI×猫好きの想いで作った、論文を読んで勉強したことをシェアするサイトです
             </p>
             
             <!-- 3つの特徴 -->
@@ -492,9 +492,9 @@ get_header(); ?>
                     <div class="icon bg-white bg-opacity-20 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
                         <i class="fas fa-file-alt"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">論文ベースの確かな情報</h3>
+                    <h3 class="text-xl font-bold mb-2">論文を読んで学んだこと</h3>
                     <p class="text-white text-opacity-80">
-                        最新の研究論文をAIで分析し、科学的根拠に基づいた情報を提供
+                        最新の研究論文をAIで翻訳して読み、勉強したことをシェア
                     </p>
                 </div>
                 
@@ -504,7 +504,7 @@ get_header(); ?>
                     </div>
                     <h3 class="text-xl font-bold mb-2">楽しく学べるキャラクター講義</h3>
                     <p class="text-white text-opacity-80">
-                        5匹の個性豊かな猫講師たちが、会話形式で分かりやすく解説
+                        5匹の個性豊かな猫たちが、会話形式で勉強したことを一緒に学ぶ
                     </p>
                 </div>
                 
@@ -514,7 +514,7 @@ get_header(); ?>
                     </div>
                     <h3 class="text-xl font-bold mb-2">AI活用による最新情報</h3>
                     <p class="text-white text-opacity-80">
-                        常に最新の研究成果を反映し、専門家レビューで品質を保証
+                        常に最新の研究成果を読んで学び、専門家の方にレビューをお願いしています
                     </p>
                 </div>
                 

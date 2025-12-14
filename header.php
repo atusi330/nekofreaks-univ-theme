@@ -21,8 +21,8 @@
         <div class="header-top bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2">
             <div class="container mx-auto px-4">
                 <div class="flex justify-between items-center text-sm">
-                    <span><i class="fas fa-paw mr-1"></i>猫の論文ベース教育メディア</span>
-                    <span>AIと専門家監修による信頼性の高いコンテンツ</span>
+                    <span><i class="fas fa-paw mr-1"></i>猫の論文を読んで学ぶサイト</span>
+                    <span>AIと猫好きが作る猫好きのためのコンテンツ</span>
                 </div>
             </div>
         </div>

@@ -252,7 +252,7 @@ if ($key_points) {
                 <section class="episode-content bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-file-text text-green-600 mr-2"></i>
-                        詳細な解説
+                        勉強したことのまとめ
                     </h2>
                     <div class="prose prose-lg max-w-none episode-content">
                         <?php the_content(); ?>

@@ -12,9 +12,9 @@
                         <h4 class="text-lg font-bold mb-4"><i class="fas fa-robot mr-2"></i>AI活用について</h4>
                         <p class="text-sm text-gray-400 mb-4">
                             本サイトはAI技術を活用して論文の要約・講座作成を行っています。
-                            正確性向上のため、継続的な改善を行っています。
+                            できる限り正確に理解できるよう、継続的に勉強しています。
                         </p>
-                        <a href="<?php echo home_url('/about/policy/'); ?>" class="text-pink-400 hover:text-pink-300 hover:underline transition-colors">
+                        <a href="<?php echo home_url('/about/'); ?>" class="text-pink-400 hover:text-pink-300 hover:underline transition-colors">
                             詳細を読む →
                         </a>
                     </div>
@@ -24,7 +24,7 @@
                         <h4 class="text-lg font-bold mb-4"><i class="fas fa-user-md mr-2"></i>専門家レビュー募集</h4>
                         <p class="text-sm text-gray-400 mb-4">
                             獣医師・動物行動学者・研究者の方々からのレビューを歓迎いたします。
-                            より正確で有益な情報提供にご協力ください。
+                            より正確に理解できるよう、ご協力いただけると嬉しいです。
                         </p>
                         <a href="<?php echo home_url('/contact/expert-review/'); ?>" class="inline-block border-2 border-pink-400 text-pink-400 px-4 py-2 rounded-full text-sm font-semibold hover:bg-pink-400 hover:text-white transition-all">
                             レビューに協力する
@@ -38,7 +38,7 @@
                             猫好きとして、信頼できる情報をみんなで作っていきたい。
                             すべては愛する猫たちの幸せのために...
                         </p>
-                        <a href="<?php echo home_url('/about/founder-message/'); ?>" class="text-pink-400 hover:text-pink-300 hover:underline transition-colors">
+                        <a href="<?php echo home_url('/about/'); ?>" class="text-pink-400 hover:text-pink-300 hover:underline transition-colors">
                             メッセージを読む →
                         </a>
                     </div>
@@ -98,18 +98,18 @@
                             <h5 class="text-xl font-bold">ネコフリークス大学</h5>
                         </div>
                         <p class="text-sm text-gray-400 mb-4">
-                            論文×AI×猫好きの想いで作った、信頼できる猫情報メディア。
-                            科学的根拠に基づいた情報を、親しみやすい形でお届けします。
+                            論文×AI×猫好きの想いで作った、論文を読んで勉強したことをシェアするサイトです。<br>
+                            実在の猫たちをモデルに、親しみやすい形でシェアしています。<br>
                         </p>
                         <div class="social-links flex space-x-4">
                             <!-- ソーシャルリンクがあれば追加 -->
                             <a href="#" class="text-gray-400 hover:text-white transition-colors">
                                 <span class="sr-only">Twitter</span>
-                                🐦
+                                <i class="fab fa-twitter text-xl"></i>
                             </a>
                             <a href="#" class="text-gray-400 hover:text-white transition-colors">
                                 <span class="sr-only">YouTube</span>
-                                📺
+                                <i class="fab fa-youtube text-xl"></i>
                             </a>
                         </div>
                     </div>
@@ -148,7 +148,7 @@
                             <a href="<?php echo home_url('/terms/'); ?>" class="hover:text-white transition-colors">
                                 利用規約
                             </a>
-                            <a href="<?php echo home_url('/about/policy/'); ?>" class="hover:text-white transition-colors">
+                            <a href="<?php echo home_url('/about/'); ?>" class="hover:text-white transition-colors">
                                 AI活用ポリシー
                             </a>
                         </div>
@@ -156,7 +156,7 @@
                     
                     <!-- 免責事項 -->
                     <div class="mt-4 text-center text-xs text-gray-500">
-                        <p class="mb-1">本サイトのコンテンツはAIによる論文要約を含みます。正確性には最大限配慮していますが、</p>
+                        <p class="mb-1">本サイトのコンテンツはAIによる論文翻訳・要約を含みます。できる限り正確に理解しようとしていますが、</p>
                         <p>重要な判断の際は必ず獣医師等の専門家にご相談ください。</p>
                     </div>
                 </div>

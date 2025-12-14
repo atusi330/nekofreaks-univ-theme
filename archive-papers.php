@@ -13,7 +13,7 @@ get_header(); ?>
         <div class="container mx-auto px-4">
             <h1 class="text-4xl font-bold text-center mb-4"><i class="fas fa-file-alt mr-3"></i>論文要約アーカイブ</h1>
             <p class="text-xl text-center text-white/80">
-                最新の猫研究論文を、わかりやすく要約してお届けします
+                最新の猫研究論文を、AIで翻訳して読んで、勉強したことをシェアしています
             </p>
         </div>
     </section>

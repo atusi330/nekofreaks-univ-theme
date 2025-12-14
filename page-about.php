@@ -18,8 +18,7 @@ get_header(); ?>
                     ネコフリークス大学について
                 </h1>
                 <p class="text-xl text-white/90 max-w-3xl mx-auto">
-                    猫の論文ベースの教育メディアとして、信頼性の高い学術情報を
-                    親しみやすいキャラクターと共にお届けします
+                    猫の論文を読んで勉強したことを、親しみやすいキャラクターと共にシェアするサイトです
                 </p>
             </div>
         </div>
@@ -40,9 +39,9 @@ get_header(); ?>
                     <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-search text-2xl text-blue-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">学術的信頼性</h3>
+                    <h3 class="text-xl font-bold mb-3">論文を読んで学ぶ</h3>
                     <p class="text-gray-600">
-                        査読済み論文を基にした、科学的根拠のある情報のみを提供します。
+                        査読済み論文を読んで、勉強したことをシェアしています。
                     </p>
                 </div>
                 
@@ -52,7 +51,7 @@ get_header(); ?>
                     </div>
                     <h3 class="text-xl font-bold mb-3">親しみやすさ</h3>
                     <p class="text-gray-600">
-                        個性豊かな猫のキャラクターが、難しい内容も分かりやすく解説します。
+                        個性豊かな猫のキャラクターが、難しい内容も一緒に学んでいきます。
                     </p>
                 </div>
                 
@@ -62,7 +61,7 @@ get_header(); ?>
                     </div>
                     <h3 class="text-xl font-bold mb-3">実用性</h3>
                     <p class="text-gray-600">
-                        日常の猫との暮らしに直接役立つ知識を、実践的な形でお届けします。
+                        日常の猫との暮らしに直接役立つ知識を、勉強したことをまとめてシェアします。
                     </p>
                 </div>
             </div>
@@ -96,7 +95,7 @@ get_header(); ?>
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
-                            専門家による内容の監修・確認を実施します
+                            専門家の方に内容のレビューをお願いしています
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
