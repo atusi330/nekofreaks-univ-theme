@@ -241,8 +241,14 @@ if ($key_points) {
                         <!-- 右側：文章 -->
                         <div class="flex-1">
                             <p class="text-gray-700 leading-relaxed text-base md:text-lg">
-                                僕たちは獣医さんじゃないから、論文や専門書を読んで勉強したことをみんなとシェアしているんだよ。<br>
-                                だから、猫ちゃんの健康で心配なことがあったら、必ず動物病院で診てもらってね！
+                                僕たち「ネコフリークス大学」は<strong>架空の大学</strong>で、
+                                僕や教授たちは実在の猫をモデルにした<strong>キャラクター</strong>なんだ！<br>
+                                実際には、猫好きの飼い主さんがAIを使って英語の論文を読んで勉強して、
+                                僕たちが案内する形でみんなにシェアしているんだよ。<br><br>
+                                <span class="inline-block bg-yellow-100 border-l-4 border-yellow-500 px-4 py-2 rounded">
+                                    <strong>だから、獣医さんや専門家じゃないから、
+                                    猫ちゃんの健康で心配なことがあったら、必ず動物病院で診てもらってね！</strong>
+                                </span>
                             </p>
                         </div>
                     </div>

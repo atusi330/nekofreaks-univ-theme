@@ -314,6 +314,22 @@ get_header(); ?>
                             </div>
                         </div>
                         
+                        <!-- 世界観説明 -->
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl shadow-lg p-6 border border-purple-200">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                                <i class="fas fa-theater-masks text-purple-600 mr-2"></i>
+                                キャラクターについて
+                            </h3>
+                            <p class="text-sm text-gray-700 leading-relaxed mb-2">
+                                マロン学長や教授たちは、実在の猫をモデルにした
+                                <strong>キャラクター</strong>です。
+                            </p>
+                            <p class="text-xs text-gray-600">
+                                実際には猫好きの運営者が論文を読んで勉強し、
+                                親しみやすい形でお届けしています。
+                            </p>
+                        </div>
+                        
                         <!-- 関連講座・講座回 -->
                         <?php if ($related_lecture || $related_episode) : ?>
                             <div class="bg-white rounded-xl shadow-lg p-6">

@@ -11,8 +11,10 @@
                     <div class="policy-section">
                         <h4 class="text-lg font-bold mb-4"><i class="fas fa-robot mr-2"></i>AI活用について</h4>
                         <p class="text-sm text-gray-400 mb-4">
-                            本サイトはAI技術を活用して論文の要約・講座作成を行っています。
-                            できる限り正確に理解できるよう、継続的に勉強しています。
+                            「ネコフリークス大学」は架空の大学です。<br>
+                            実在の猫たちをモデルにしたキャラクターが「教授」として登場しますが、
+                            実際には猫好きの運営者がAIで英語論文を翻訳し、
+                            勉強した内容を親しみやすい形でお届けしています。
                         </p>
                         <a href="<?php echo home_url('/about/'); ?>" class="text-pink-400 hover:text-pink-300 hover:underline transition-colors">
                             詳細を読む →

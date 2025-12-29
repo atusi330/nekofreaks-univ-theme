@@ -37,7 +37,12 @@ get_header(); ?>
                         「ようこそ！ネコフリークス大学へ！<br>
                         ぼくと一緒に、猫のこと、たくさん学ぼうね！」
                     </p>
-                    <p class="text-sm text-gray-600 mt-2">- マロン学長</p>
+                    <p class="text-sm text-gray-600 mt-2">
+                        - マロン学長（キャラクター）
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">
+                        ※架空の大学です
+                    </p>
                 </div>
             </div>
             
@@ -502,9 +507,10 @@ get_header(); ?>
                     <div class="icon bg-white bg-opacity-20 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
                         <i class="fas fa-cat"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">楽しく学べるキャラクター講義</h3>
+                    <h3 class="text-xl font-bold mb-2">猫のキャラクターと一緒に学ぶ</h3>
                     <p class="text-white text-opacity-80">
-                        5匹の個性豊かな猫たちが、会話形式で勉強したことを一緒に学ぶ
+                        実在の5匹の猫をモデルにした「教授」キャラクターが、
+                        親しみやすい会話形式で案内します
                     </p>
                 </div>
                 

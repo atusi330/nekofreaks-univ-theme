@@ -27,6 +27,64 @@ get_header(); ?>
     <div class="container mx-auto px-4 py-12">
         <?php nfu_breadcrumb(); ?>
         
+        <!-- 世界観説明セクション -->
+        <section class="mb-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">ネコフリークス大学とは？</h2>
+                <div class="w-24 h-1 bg-purple-600 mx-auto"></div>
+            </div>
+            
+            <div class="max-w-3xl mx-auto bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 border-l-4 border-purple-600">
+                <div class="text-center mb-6">
+                    <div class="text-6xl mb-4">🎓✨</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">架空の猫の大学です</h3>
+                </div>
+                
+                <div class="space-y-4 text-gray-700">
+                    <p>
+                        「ネコフリークス大学」は、実在の5匹の猫たちをモデルにした
+                        <strong>架空の大学</strong>です。
+                    </p>
+                    
+                    <p>
+                        猫たちが「マロン学長」「いち教授」などの<strong>キャラクター</strong>として登場し、
+                        獣医学・動物行動学の論文を一緒に学んでいくという設定で運営しています。
+                    </p>
+                    
+                    <div class="bg-white rounded-lg p-4 border border-purple-200 mt-6">
+                        <h4 class="font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-info-circle text-purple-600 mr-2"></i>
+                            実際の制作体制
+                        </h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <i class="fas fa-user text-purple-600 mr-2 mt-1"></i>
+                                <span><strong>運営者：</strong>猫好きの一般人（獣医師・研究者ではありません）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-robot text-purple-600 mr-2 mt-1"></i>
+                                <span><strong>AI活用：</strong>英語論文の翻訳・理解をサポート</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-book text-purple-600 mr-2 mt-1"></i>
+                                <span><strong>情報源：</strong>査読済み学術論文・獣医学ガイドライン</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-cat text-purple-600 mr-2 mt-1"></i>
+                                <span><strong>キャラクター：</strong>実在の猫5匹をモデルに作成</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <p class="text-sm text-gray-600 mt-4">
+                        専門家ではない私たちが、論文を読んで勉強したことを
+                        「猫の教授たち」というキャラクターを通じて、
+                        親しみやすくお届けしています。
+                    </p>
+                </div>
+            </div>
+        </section>
+        
         <!-- ミッション -->
         <section class="mb-16">
             <div class="text-center mb-12">

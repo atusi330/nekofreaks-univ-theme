@@ -96,6 +96,18 @@ get_header(); ?>
         </div>
     </section>
 
+    <!-- 世界観説明バナー -->
+    <div class="max-w-4xl mx-auto mb-6 px-4">
+        <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+            <p class="text-sm text-gray-700">
+                <i class="fas fa-info-circle text-purple-600 mr-2"></i>
+                この論文要約は、猫好きの運営者がAIを活用して英語論文を読み、
+                勉強した内容をまとめたものです。
+                運営者は獣医師・研究者ではありません。
+            </p>
+        </div>
+    </div>
+
     <!-- アイキャッチ画像（ある場合） -->
     <?php if (has_post_thumbnail()) : ?>
         <section class="paper-featured-image -mt-8 mb-12">

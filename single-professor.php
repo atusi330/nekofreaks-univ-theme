@@ -48,6 +48,12 @@
                 
                 <!-- 講師基本情報 -->
                 <div class="professor-info flex-1 text-center lg:text-left">
+                    <div class="mb-2">
+                        <span class="inline-block bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold">
+                            <i class="fas fa-star mr-1"></i>キャラクター紹介
+                        </span>
+                    </div>
+                    
                     <h1 class="text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
                         <?php echo esc_html($professor_name); ?>
                         <?php if ( $professor_sex_age ) : ?>
@@ -56,6 +62,9 @@
                     </h1>
                     
                     <?php if ( $professor_position ) : ?>
+                        <p class="text-lg text-gray-600 mb-4">
+                            実在の猫をモデルにした「<?php echo esc_html($professor_position); ?>」キャラクターです
+                        </p>
                         <div class="mb-6">
                             <span class="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full text-xl font-semibold shadow-lg">
                                 <?php echo esc_html($professor_position); ?>

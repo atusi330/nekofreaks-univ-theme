@@ -347,6 +347,23 @@ switch($difficulty_name) {
             
             <!-- サイドバー -->
             <div class="space-y-6">
+                <!-- 世界観説明 -->
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl shadow-lg p-6 mb-6 border border-purple-200">
+                    <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-info-circle text-purple-600 mr-2"></i>
+                        この講座について
+                    </h3>
+                    <p class="text-sm text-gray-700 leading-relaxed mb-3">
+                        この講座は、猫好きの運営者がAIを活用して英語論文を読み、
+                        勉強した内容を「<?php echo esc_html($professor_info['name']); ?>」などの
+                        <strong>猫のキャラクター</strong>が案内する形でお届けしています。
+                    </p>
+                    <p class="text-xs text-gray-600 bg-white rounded px-3 py-2 border border-purple-100">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        運営者は獣医師・研究者ではありません
+                    </p>
+                </div>
+                
                 <!-- 講座アクション -->
                 <div class="lecture-actions bg-white rounded-lg shadow-md p-6">
                     <h3 class="font-bold text-gray-800 mb-4">講座を始める</h3>

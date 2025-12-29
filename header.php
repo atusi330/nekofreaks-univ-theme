@@ -50,6 +50,7 @@
                     ?>
                         <p class="site-description text-gray-600 mt-2 text-sm">
                             <?php echo $description; ?>
+                            <span class="text-xs text-gray-500 ml-2">※架空の猫の大学です</span>
                         </p>
                     <?php endif; ?>
                 </div>
