@@ -479,3 +479,172 @@ function nfu_allow_mark_tag( $tags, $context ) {
     return $tags;
 }
 add_filter( 'wp_kses_allowed_html', 'nfu_allow_mark_tag', 10, 2 );
+
+/**
+ * 日本語が含まれているかチェック
+ */
+function nfu_contains_japanese( $text ) {
+    return preg_match( '/[\x{3040}-\x{309F}\x{30A0}-\x{30FF}\x{4E00}-\x{9FAF}]/u', $text );
+}
+
+/**
+ * 専門家エントリーフォーム送信処理
+ */
+function nfu_handle_expert_entry() {
+    // ノンスチェック
+    if ( ! isset( $_POST['nfu_entry_nonce'] ) || ! wp_verify_nonce( $_POST['nfu_entry_nonce'], 'nfu_expert_entry_action' ) ) {
+        wp_die( 'セキュリティチェックに失敗しました。' );
+    }
+    
+    // ハニーポットチェック
+    if ( ! empty( $_POST['nfu_honeypot'] ) ) {
+        // スパムと判断して無視
+        wp_redirect( add_query_arg( 'entry_sent', '1', wp_get_referer() ?: home_url( '/expert-entry/' ) ) );
+        exit;
+    }
+    
+    // 必須フィールドのバリデーション
+    $name = isset( $_POST['expert_name'] ) ? sanitize_text_field( $_POST['expert_name'] ) : '';
+    $qualification = isset( $_POST['expert_qualification'] ) ? sanitize_text_field( $_POST['expert_qualification'] ) : '';
+    $affiliation = isset( $_POST['expert_affiliation'] ) ? esc_url_raw( $_POST['expert_affiliation'] ) : '';
+    $email = isset( $_POST['expert_email'] ) ? sanitize_email( $_POST['expert_email'] ) : '';
+    $message = isset( $_POST['expert_message'] ) ? sanitize_textarea_field( $_POST['expert_message'] ) : '';
+    
+    if ( empty( $name ) || empty( $qualification ) || empty( $affiliation ) || empty( $email ) ) {
+        wp_die( '必須項目が入力されていません。' );
+    }
+    
+    // 日本語チェック（メッセージがある場合のみ）
+    if ( ! empty( $message ) && ! nfu_contains_japanese( $message ) ) {
+        // 英語のみのメッセージはスパムと判断
+        wp_redirect( add_query_arg( 'entry_sent', '1', wp_get_referer() ?: home_url( '/expert-entry/' ) ) );
+        exit;
+    }
+    
+    // 管理者メールアドレス取得
+    $admin_email = get_option( 'admin_email' );
+    $site_name = get_bloginfo( 'name' );
+    
+    // メール件名
+    $subject = sprintf( '【専門家監修応募】%s（%s）', $name, $qualification );
+    
+    // メール本文
+    $email_body = "専門家監修エントリーフォームから応募がありました。\n\n";
+    $email_body .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+    $email_body .= "お名前: {$name}\n";
+    $email_body .= "保有資格: {$qualification}\n";
+    $email_body .= "所属・URL: {$affiliation}\n";
+    $email_body .= "メールアドレス: {$email}\n";
+    if ( ! empty( $message ) ) {
+        $email_body .= "メッセージ:\n{$message}\n";
+    }
+    $email_body .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+    $email_body .= "\n送信日時: " . current_time( 'mysql' ) . "\n";
+    $email_body .= "IPアドレス: " . $_SERVER['REMOTE_ADDR'] . "\n";
+    
+    // メール送信
+    $headers = array(
+        'From: ' . $site_name . ' <' . $admin_email . '>',
+        'Reply-To: ' . $name . ' <' . $email . '>',
+        'Content-Type: text/plain; charset=UTF-8',
+    );
+    
+    wp_mail( $admin_email, $subject, $email_body, $headers );
+    
+    // リダイレクト
+    wp_redirect( add_query_arg( 'entry_sent', '1', wp_get_referer() ?: home_url( '/expert-entry/' ) ) );
+    exit;
+}
+add_action( 'admin_post_nfu_expert_entry', 'nfu_handle_expert_entry' );
+add_action( 'admin_post_nopriv_nfu_expert_entry', 'nfu_handle_expert_entry' );
+
+/**
+ * 一般お問い合わせフォーム送信処理
+ */
+function nfu_handle_general_contact() {
+    // ノンスチェック
+    if ( ! isset( $_POST['nfu_contact_nonce'] ) || ! wp_verify_nonce( $_POST['nfu_contact_nonce'], 'nfu_contact_action' ) ) {
+        wp_die( 'セキュリティチェックに失敗しました。' );
+    }
+    
+    // ハニーポットチェック
+    if ( ! empty( $_POST['nfu_honeypot'] ) ) {
+        // スパムと判断して無視
+        wp_redirect( add_query_arg( 'contact_sent', '1', wp_get_referer() ?: home_url( '/contact/' ) ) );
+        exit;
+    }
+    
+    // 必須フィールドのバリデーション
+    $name = isset( $_POST['contact_name'] ) ? sanitize_text_field( $_POST['contact_name'] ) : '';
+    $email = isset( $_POST['contact_email'] ) ? sanitize_email( $_POST['contact_email'] ) : '';
+    $type = isset( $_POST['contact_type'] ) ? sanitize_text_field( $_POST['contact_type'] ) : '';
+    $message = isset( $_POST['contact_message'] ) ? sanitize_textarea_field( $_POST['contact_message'] ) : '';
+    
+    if ( empty( $name ) || empty( $email ) || empty( $type ) || empty( $message ) ) {
+        wp_die( '必須項目が入力されていません。' );
+    }
+    
+    // 日本語チェック
+    $check_text = $name . ' ' . $message;
+    if ( ! nfu_contains_japanese( $check_text ) ) {
+        // 英語のみのメッセージはスパムと判断
+        wp_redirect( add_query_arg( 'contact_sent', '1', wp_get_referer() ?: home_url( '/contact/' ) ) );
+        exit;
+    }
+    
+    // 管理者メールアドレス取得
+    $admin_email = get_option( 'admin_email' );
+    $site_name = get_bloginfo( 'name' );
+    
+    // 管理者宛メール件名
+    $admin_subject = sprintf( '【お問い合わせ】%s - %s', $type, $name );
+    
+    // 管理者宛メール本文
+    $admin_body = "お問い合わせフォームからメッセージが届きました。\n\n";
+    $admin_body .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+    $admin_body .= "お名前: {$name}\n";
+    $admin_body .= "メールアドレス: {$email}\n";
+    $admin_body .= "お問い合わせ種別: {$type}\n";
+    $admin_body .= "お問い合わせ内容:\n{$message}\n";
+    $admin_body .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+    $admin_body .= "\n送信日時: " . current_time( 'mysql' ) . "\n";
+    $admin_body .= "IPアドレス: " . $_SERVER['REMOTE_ADDR'] . "\n";
+    
+    // 管理者宛メール送信
+    $admin_headers = array(
+        'From: ' . $site_name . ' <' . $admin_email . '>',
+        'Reply-To: ' . $name . ' <' . $email . '>',
+        'Content-Type: text/plain; charset=UTF-8',
+    );
+    
+    wp_mail( $admin_email, $admin_subject, $admin_body, $admin_headers );
+    
+    // 自動返信メール
+    $auto_reply_subject = '【' . $site_name . '】お問い合わせを受け付けました';
+    $auto_reply_body = "{$name} 様\n\n";
+    $auto_reply_body .= "この度は、{$site_name}にお問い合わせいただき、ありがとうございます。\n\n";
+    $auto_reply_body .= "以下の内容でお問い合わせを受け付けました。\n";
+    $auto_reply_body .= "内容を確認の上、順次ご返信させていただきます。\n\n";
+    $auto_reply_body .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+    $auto_reply_body .= "お問い合わせ種別: {$type}\n";
+    $auto_reply_body .= "お問い合わせ内容:\n{$message}\n";
+    $auto_reply_body .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+    $auto_reply_body .= "※このメールは自動送信されています。\n";
+    $auto_reply_body .= "ご返信は上記の内容を元に、別途ご連絡させていただきます。\n\n";
+    $auto_reply_body .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+    $auto_reply_body .= $site_name . "\n";
+    $auto_reply_body .= get_site_url() . "\n";
+    
+    $auto_reply_headers = array(
+        'From: ' . $site_name . ' <' . $admin_email . '>',
+        'Content-Type: text/plain; charset=UTF-8',
+    );
+    
+    wp_mail( $email, $auto_reply_subject, $auto_reply_body, $auto_reply_headers );
+    
+    // リダイレクト
+    wp_redirect( add_query_arg( 'contact_sent', '1', wp_get_referer() ?: home_url( '/contact/' ) ) );
+    exit;
+}
+add_action( 'admin_post_nfu_general_contact', 'nfu_handle_general_contact' );
+add_action( 'admin_post_nopriv_nfu_general_contact', 'nfu_handle_general_contact' );
