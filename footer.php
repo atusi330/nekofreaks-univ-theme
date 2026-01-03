@@ -25,10 +25,10 @@
                     <div class="review-section">
                         <h4 class="text-lg font-bold mb-4"><i class="fas fa-user-md mr-2"></i>専門家レビュー募集</h4>
                         <p class="text-sm text-gray-400 mb-4">
-                            獣医師・動物行動学者・研究者の方々からのレビューを歓迎いたします。
-                            より正確に理解できるよう、ご協力いただけると嬉しいです。
+                            現在は、ただの猫好きが論文を読んで勉強したことをシェアするサイトですが、飼い主にとって有益な情報を提供できるよう、獣医師・動物行動学者・研究者の方々からのレビューを歓迎いたします。
+                            より良いコンテンツを目指しているので、ご協力いただけると嬉しいです。
                         </p>
-                        <a href="<?php echo home_url('/contact/expert-review/'); ?>" class="inline-block border-2 border-pink-400 text-pink-400 px-4 py-2 rounded-full text-sm font-semibold hover:bg-pink-400 hover:text-white transition-all">
+                        <a href="<?php echo home_url('/expert-entry/'); ?>" class="inline-block border-2 border-pink-400 text-pink-400 px-4 py-2 rounded-full text-sm font-semibold hover:bg-pink-400 hover:text-white transition-all">
                             レビューに協力する
                         </a>
                     </div>
@@ -93,30 +93,40 @@
             <div class="footer-bottom">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
                     
-                    <!-- サイト情報 -->
-                    <div class="site-info">
-                        <div class="flex items-center mb-4">
-                            <i class="fas fa-graduation-cap text-3xl mr-2"></i>
-                            <h5 class="text-xl font-bold">ネコフリークス大学</h5>
+                    <!-- 左カラム -->
+                    <div class="space-y-6">
+                        <!-- 医療情報の取り扱いについて -->
+                        <div class="medical-disclaimer bg-gray-800 rounded-lg p-4 border-l-4 border-red-500">
+                            <p class="font-bold text-red-400 mb-2 text-sm">【重要】医療情報の取り扱いについて</p>
+                            <p class="text-xs text-gray-400 mb-2 leading-relaxed">本サイトの記事は、学術論文をAI技術を用いて要約・翻訳したものであり、獣医師による診断・治療に代わるものではありません。</p>
+                            <p class="text-xs text-gray-400 leading-relaxed">愛猫の健康状態に不安がある場合は、必ずかかりつけの獣医師にご相談ください。本サイトの情報を元に生じた損害について、運営者は一切の責任を負いかねます。</p>
                         </div>
-                        <p class="text-sm text-gray-400 mb-4">
-                            論文×AI×猫好きの想いで作った、論文を読んで勉強したことをシェアするサイトです。<br>
-                            実在の猫たちをモデルに、親しみやすい形でシェアしています。<br>
-                        </p>
-                        <div class="social-links flex space-x-4">
-                            <!-- ソーシャルリンクがあれば追加 -->
-                            <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                                <span class="sr-only">Twitter</span>
-                                <i class="fab fa-twitter text-xl"></i>
-                            </a>
-                            <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                                <span class="sr-only">YouTube</span>
-                                <i class="fab fa-youtube text-xl"></i>
-                            </a>
+                        
+                        <!-- サイト情報 -->
+                        <div class="site-info">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-graduation-cap text-3xl mr-2"></i>
+                                <h5 class="text-xl font-bold">ネコフリークス大学</h5>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-4">
+                                論文×AI×猫好きの想いで作った、論文を読んで勉強したことをシェアするサイトです。<br>
+                                実在の猫たちをモデルに、親しみやすい形でシェアしています。<br>
+                            </p>
+                            <div class="social-links flex space-x-4">
+                                <!-- ソーシャルリンクがあれば追加 -->
+                                <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                                    <span class="sr-only">Twitter</span>
+                                    <i class="fab fa-twitter text-xl"></i>
+                                </a>
+                                <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                                    <span class="sr-only">YouTube</span>
+                                    <i class="fab fa-youtube text-xl"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- クイックリンク -->
+                    <!-- 右カラム：クイックリンク -->
                     <div class="quick-links">
                         <h5 class="text-lg font-bold mb-4">クイックリンク</h5>
                         <div class="grid grid-cols-2 gap-2">
@@ -154,12 +164,6 @@
                                 AI活用ポリシー
                             </a>
                         </div>
-                    </div>
-                    
-                    <!-- 免責事項 -->
-                    <div class="mt-4 text-center text-xs text-gray-500">
-                        <p class="mb-1">本サイトのコンテンツはAIによる論文翻訳・要約を含みます。できる限り正確に理解しようとしていますが、</p>
-                        <p>重要な判断の際は必ず獣医師等の専門家にご相談ください。</p>
                     </div>
                 </div>
             </div>

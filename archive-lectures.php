@@ -104,7 +104,7 @@ get_header(); ?>
         </div>
         
         <!-- 講座グリッド -->
-        <div id="lecture-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div id="lecture-grid" class="lecture-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto">
             <?php if ( have_posts() ) : ?>
                 <?php while ( have_posts() ) : the_post(); ?>
                     <?php get_template_part( 'template-parts/content', 'lecture-card' ); ?>

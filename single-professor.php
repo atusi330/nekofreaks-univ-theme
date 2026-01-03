@@ -9,6 +9,7 @@
     <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); 
         // 講師情報を取得
         $professor_name = nfu_get_field('professor_name') ?: get_the_title();
+        $professor_id = nfu_get_field('professor_id');
         $professor_position = nfu_get_field('professor_position');
         $professor_responsibility = nfu_get_field('professor_responsibility');
         $professor_breed = nfu_get_field('professor_breed');
@@ -230,8 +231,18 @@
                             <?php endif; ?>
                         </div>
                         
-                        <!-- 講師一覧へのリンク -->
+                        <!-- お気に入り講師に登録ボタン -->
                         <div class="mt-8 pt-6 border-t border-gray-200">
+                            <button id="set-favorite-professor-btn" 
+                                    class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition-all shadow-md"
+                                    data-professor-name="<?php echo esc_attr($professor_name); ?>"
+                                    data-professor-id="<?php echo esc_attr($professor_id); ?>">
+                                <i class="fas fa-star mr-2"></i>お気に入り講師に登録
+                            </button>
+                        </div>
+                        
+                        <!-- 講師一覧へのリンク -->
+                        <div class="mt-4">
                             <a href="<?php echo get_post_type_archive_link('professor'); ?>" 
                                class="block w-full text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all">
                                 <i class="fas fa-users mr-2"></i>
@@ -273,5 +284,82 @@
     }
 }
 </style>
+
+<script>
+(function() {
+    'use strict';
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        var favoriteBtn = document.getElementById('set-favorite-professor-btn');
+        if (!favoriteBtn) return;
+        
+        var professorName = favoriteBtn.dataset.professorName;
+        var professorId = favoriteBtn.dataset.professorId;
+        
+        // 既に登録済みかチェック
+        var currentFavorite = localStorage.getItem('nfu_favorite_professor');
+        if (currentFavorite === professorName) {
+            updateButtonToRegistered(favoriteBtn);
+        }
+        
+        // ボタンクリックイベント
+        favoriteBtn.addEventListener('click', function() {
+            // LocalStorageに保存
+            localStorage.setItem('nfu_favorite_professor', professorName);
+            
+            // サーバー側のお気に入り数を更新（オプション）
+            if (professorId && window.nfu_ajax && window.nfu_ajax.professor_favorite_nonce) {
+                var formData = new FormData();
+                formData.append('action', 'update_professor_favorite_count');
+                formData.append('professor_id', professorId);
+                formData.append('increment', '1');
+                formData.append('nonce', window.nfu_ajax.professor_favorite_nonce);
+                
+                fetch(window.nfu_ajax.ajax_url, {
+                    method: 'POST',
+                    body: formData
+                }).catch(function(error) {
+                    console.error('Failed to update professor favorite count:', error);
+                });
+            }
+            
+            // UI更新
+            updateButtonToRegistered(favoriteBtn);
+            
+            // 通知表示
+            showNotification('お気に入り講師に登録しました！', 'success');
+        });
+        
+        function updateButtonToRegistered(btn) {
+            btn.innerHTML = '<i class="fas fa-check mr-2"></i>お気に入り講師に登録済み';
+            btn.classList.remove('from-pink-500', 'to-purple-500', 'hover:from-pink-600', 'hover:to-purple-600');
+            btn.classList.add('bg-green-500', 'hover:bg-green-600');
+            btn.disabled = true;
+        }
+        
+        function showNotification(message, type) {
+            var bgColor = type === 'success' ? 'bg-green-500' : 
+                          type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            
+            var notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 ' + bgColor + ' text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            notification.innerHTML = '<div class="flex items-center">' +
+                '<i class="fas fa-paw mr-2"></i>' +
+                '<span>' + message + '</span>' +
+            '</div>';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(function() {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.3s';
+                setTimeout(function() {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+    });
+})();
+</script>
 
 <?php get_footer(); ?>

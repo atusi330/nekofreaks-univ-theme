@@ -38,10 +38,10 @@ get_header(); ?>
                         ぼくと一緒に、猫のこと、たくさん学ぼうね！」
                     </p>
                     <p class="text-sm text-gray-600 mt-2">
-                        - マロン学長（キャラクター）
+                        - マロン学長
                     </p>
                     <p class="text-xs text-gray-500 mt-1">
-                        ※架空の大学です
+                        ※キャラクターは実在の猫をモデルにしていますが、大学・役職等は架空のものです。
                     </p>
                 </div>
             </div>
@@ -177,7 +177,15 @@ get_header(); ?>
                                 ?>
                             </h3>
                             <p class="text-lg opacity-90 mb-4">
-                                担当：<?php echo nfu_get_professor_name( $professor ); ?> × マロン学長
+                                担当：<?php 
+                                $professor_data = nfu_get_professor_by_id( $professor );
+                                $professor_name = $professor_data ? $professor_data['name'] : nfu_get_professor_name( $professor );
+                                $professor_position = $professor_data && !empty($professor_data['position']) ? $professor_data['position'] : '';
+                                echo esc_html( $professor_name );
+                                if ( $professor_position ) {
+                                    echo '（' . esc_html( $professor_position ) . '）';
+                                }
+                                ?> × マロン学長
                             </p>
                             
                             <!-- 進捗表示 -->
@@ -238,9 +246,9 @@ get_header(); ?>
                         <!-- 講座サムネイル -->
                         <div class="lecture-thumbnail">
                             <?php if ( has_post_thumbnail() ) : ?>
-                                <?php the_post_thumbnail('medium', array('class' => 'w-48 h-48 lg:w-52 lg:h-52 object-cover rounded-lg shadow-xl')); ?>
+                                <?php the_post_thumbnail('medium', array('class' => 'w-full object-cover rounded-lg shadow-xl')); ?>
                             <?php else : ?>
-                                <div class="w-48 h-48 lg:w-52 lg:h-52 bg-white bg-opacity-20 rounded-lg shadow-xl flex items-center justify-center">
+                                <div class="w-full bg-white bg-opacity-20 rounded-lg shadow-xl flex items-center justify-center" style="aspect-ratio: 1;">
                                     <i class="fas fa-book text-6xl lg:text-7xl"></i>
                                 </div>
                             <?php endif; ?>
@@ -248,7 +256,7 @@ get_header(); ?>
                     </div>
                     
                     <!-- アクションボタン -->
-                    <div class="mt-6 flex flex-wrap gap-4">
+                    <div class="mt-6 flex flex-wrap gap-4 justify-center">
                         <?php if ( $current_episode_id ) : ?>
                         <a href="<?php echo get_permalink( $current_episode_id ); ?>" class="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">
                             第<?php echo $current_episode_number; ?>回を受講する
@@ -291,7 +299,7 @@ get_header(); ?>
             
             if ( $available_lectures->have_posts() ) : ?>
                 <!-- 講座グリッド -->
-                <div class="lecture-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="lecture-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto lg:max-w-5xl">
                     <?php while ( $available_lectures->have_posts() ) : $available_lectures->the_post(); ?>
                         <?php get_template_part( 'template-parts/content', 'lecture-card' ); ?>
                     <?php endwhile; ?>

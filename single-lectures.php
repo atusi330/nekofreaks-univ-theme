@@ -362,6 +362,10 @@ switch($difficulty_name) {
                         <i class="fas fa-exclamation-circle mr-1"></i>
                         運営者は獣医師・研究者ではありません
                     </p>
+                    <p class="text-xs text-gray-600 bg-white rounded px-3 py-2 border border-purple-100 mt-2">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        猫の健康に関する判断は、必ず獣医師にご相談ください。
+                    </p>
                 </div>
                 
                 <!-- 講座アクション -->

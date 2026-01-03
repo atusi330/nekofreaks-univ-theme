@@ -9,16 +9,15 @@ get_header(); ?>
 
 <main class="tips-archive-page">
     <!-- ヘッダーセクション -->
-    <div class="page-header bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-16">
+    <div class="page-header bg-yellow-500 text-white py-16">
         <div class="container mx-auto px-4">
             <div class="text-center">
                 <h1 class="text-5xl font-bold mb-6">
                     <i class="fas fa-lightbulb mr-4"></i>
                     豆知識バンク
                 </h1>
-                <p class="text-xl text-white/90 max-w-3xl mx-auto">
+                <p class="text-xl text text-white/90 max-w-3xl mx-auto">
                     猫に関する豆知識を、親しみやすいチャット形式でシェアしています。
-                    講座や講座回と連携して、一緒に学んでいきます。
                 </p>
             </div>
         </div>

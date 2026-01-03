@@ -107,7 +107,7 @@ function nfu_character_dialogue( $character, $message, $position = 'left' ) {
     
     ?>
     <div class="character-dialogue flex <?php echo $alignment; ?> items-start">
-        <div class="character-icon flex-shrink-0 w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center <?php echo $position === 'right' ? 'ml-4' : 'mr-4'; ?> overflow-hidden">
+        <div class="character-icon flex-shrink-0 w-8 h-8 md:w-16 md:h-16 bg-white rounded-full shadow-md flex items-center justify-center <?php echo $position === 'right' ? 'ml-4' : 'mr-4'; ?> overflow-hidden">
             <?php 
             $professor_image = nfu_get_professor_image($character);
             if ($professor_image) : ?>

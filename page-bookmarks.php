@@ -105,7 +105,7 @@ get_header(); ?>
                             <div class="text-sm text-gray-500" id="completed-lectures-info">
                                 読み込み中...
                             </div>
-                            <a href="<?php echo home_url('/certificate/'); ?>" class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-lg hover:from-yellow-500 hover:to-orange-600 transition-all inline-flex items-center text-sm font-medium shadow-md">
+                            <a href="<?php echo home_url('/certificate/'); ?>" class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors inline-flex items-center text-sm font-medium shadow-md">
                                 <i class="fas fa-certificate mr-2"></i>修了証を見る
                             </a>
                         </div>

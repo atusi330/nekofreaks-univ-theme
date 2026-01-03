@@ -92,9 +92,38 @@ function nfu_enqueue_scripts() {
     wp_localize_script( 'nfu-main', 'nfu_ajax', array(
         'ajax_url' => admin_url( 'admin-ajax.php' ),
         'nonce'    => wp_create_nonce( 'nfu_ajax_nonce' ),
+        'professor_favorite_nonce' => wp_create_nonce( 'update_professor_favorite' ),
     ) );
 }
 add_action( 'wp_enqueue_scripts', 'nfu_enqueue_scripts' );
+
+/**
+ * ブロックエディタ用のアセット読み込み
+ */
+function nfu_enqueue_block_editor_assets() {
+    // エディタ用マーカー機能JavaScript
+    wp_enqueue_script(
+        'nfu-editor-marker',
+        NFU_THEME_URI . '/assets/js/editor-marker.js',
+        array(
+            'wp-rich-text',
+            'wp-element',
+            'wp-block-editor',
+            'wp-editor',
+        ),
+        NFU_THEME_VERSION,
+        true
+    );
+    
+    // エディタ用CSS
+    wp_enqueue_style(
+        'nfu-editor-style',
+        NFU_THEME_URI . '/assets/css/editor-style.css',
+        array( 'wp-edit-blocks' ),
+        NFU_THEME_VERSION
+    );
+}
+add_action( 'enqueue_block_editor_assets', 'nfu_enqueue_block_editor_assets' );
 
 /**
  * サイドバーの登録
@@ -458,14 +487,6 @@ if ( ! class_exists( 'NFU_Footer_Walker' ) ) {
     }
 }
 
-/**
- * マーカーショートコード
- * 使用例: [marker]マーカーを付けたいテキスト[/marker]
- */
-function nfu_marker_shortcode( $atts, $content = null ) {
-    return '<mark class="nfu-marker">' . do_shortcode( $content ) . '</mark>';
-}
-add_shortcode( 'marker', 'nfu_marker_shortcode' );
 
 /**
  * wp_kses_postで<mark>タグを許可

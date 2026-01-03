@@ -620,3 +620,106 @@ function nfu_get_lecture_progress( $lecture_id ) {
         'percentage' => round( $progress )
     );
 }
+
+/**
+ * 固定ページ（About）用の運営者紹介フィールド
+ */
+function nfu_register_about_page_fields() {
+    
+    if ( ! function_exists( 'acf_add_local_field_group' ) ) {
+        return;
+    }
+    
+    // 固定ページ（About）用フィールド
+    acf_add_local_field_group( array(
+        'key' => 'group_about_page',
+        'title' => '運営者紹介',
+        'fields' => array(
+            array(
+                'key' => 'field_operator_image',
+                'label' => '運営者画像',
+                'name' => 'operator_image',
+                'type' => 'image',
+                'instructions' => '運営者のプロフィール画像をアップロードしてください',
+                'return_format' => 'array',
+                'preview_size' => 'medium',
+                'library' => 'all',
+            ),
+            array(
+                'key' => 'field_operator_profile',
+                'label' => 'プロフィール',
+                'name' => 'operator_profile',
+                'type' => 'textarea',
+                'instructions' => '運営者のプロフィールを入力してください',
+                'rows' => 6,
+                'new_lines' => 'wpautop',
+            ),
+            array(
+                'key' => 'field_operator_sns',
+                'label' => 'SNSリンク',
+                'name' => 'operator_sns',
+                'type' => 'group',
+                'instructions' => '各種SNSのリンクを入力してください（空欄の場合は表示されません）',
+                'layout' => 'block',
+                'sub_fields' => array(
+                    array(
+                        'key' => 'field_sns_twitter',
+                        'label' => 'Twitter / X',
+                        'name' => 'twitter',
+                        'type' => 'url',
+                        'instructions' => 'Twitter / XのURLを入力',
+                        'placeholder' => 'https://twitter.com/username',
+                    ),
+                    array(
+                        'key' => 'field_sns_instagram',
+                        'label' => 'Instagram',
+                        'name' => 'instagram',
+                        'type' => 'url',
+                        'instructions' => 'InstagramのURLを入力',
+                        'placeholder' => 'https://instagram.com/username',
+                    ),
+                    array(
+                        'key' => 'field_sns_youtube',
+                        'label' => 'YouTube',
+                        'name' => 'youtube',
+                        'type' => 'url',
+                        'instructions' => 'YouTubeのURLを入力',
+                        'placeholder' => 'https://youtube.com/@username',
+                    ),
+                    array(
+                        'key' => 'field_sns_facebook',
+                        'label' => 'Facebook',
+                        'name' => 'facebook',
+                        'type' => 'url',
+                        'instructions' => 'FacebookのURLを入力',
+                        'placeholder' => 'https://facebook.com/username',
+                    ),
+                    array(
+                        'key' => 'field_sns_blog',
+                        'label' => 'ブログ',
+                        'name' => 'blog',
+                        'type' => 'url',
+                        'instructions' => 'ブログのURLを入力',
+                        'placeholder' => 'https://example.com',
+                    ),
+                ),
+            ),
+        ),
+        'location' => array(
+            array(
+                array(
+                    'param' => 'page_template',
+                    'operator' => '==',
+                    'value' => 'page-about.php',
+                ),
+            ),
+        ),
+        'menu_order' => 0,
+        'position' => 'normal',
+        'style' => 'default',
+        'label_placement' => 'top',
+        'instruction_placement' => 'label',
+        'active' => true,
+    ) );
+}
+add_action( 'acf/init', 'nfu_register_about_page_fields' );

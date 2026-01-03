@@ -26,9 +26,18 @@ $progress = nfu_get_lecture_progress( get_the_ID() );
             <span class="status-badge inline-block px-2 py-1 text-xs rounded-full <?php echo $status === '開講中' ? 'bg-green-100 text-green-800' : ($status === '完結' ? 'bg-gray-100 text-gray-600' : 'bg-yellow-100 text-yellow-800'); ?>">
                 <?php echo esc_html( $status ?: '準備中' ); ?>
             </span>
-            <?php if ( $professor ) : ?>
+            <?php if ( $professor ) : 
+                $professor_data = nfu_get_professor_by_id( $professor );
+                $professor_name = $professor_data ? $professor_data['name'] : nfu_get_professor_name( $professor );
+                $professor_position = $professor_data && !empty($professor_data['position']) ? $professor_data['position'] : '';
+            ?>
                 <span class="professor-badge <?php echo esc_attr( nfu_get_professor_class( $professor ) ); ?> text-xs px-2 py-1 rounded">
-                    <?php echo esc_html( nfu_get_professor_name( $professor ) ); ?>
+                    <?php 
+                    echo esc_html( $professor_name );
+                    if ( $professor_position ) {
+                        echo '（' . esc_html( $professor_position ) . '）';
+                    }
+                    ?>
                 </span>
             <?php endif; ?>
         </div>

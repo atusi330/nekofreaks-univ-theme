@@ -20,9 +20,9 @@
     <header id="masthead" class="site-header bg-white shadow-md">
         <div class="header-top bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2">
             <div class="container mx-auto px-4">
-                <div class="flex justify-between items-center text-sm">
-                    <span><i class="fas fa-paw mr-1"></i>猫の論文を読んで学ぶサイト</span>
-                    <span>AIと猫好きが作る猫好きのためのコンテンツ</span>
+                <div class="md:flex md:justify-between md:items-center text-sm">
+                    <span class="block md:inline"><i class="fas fa-paw mr-1"></i>猫の論文を読んで学ぶサイト</span>
+                    <span class="block md:inline">AIと猫好きが作る猫好きのためのコンテンツ</span>
                 </div>
             </div>
         </div>
@@ -33,13 +33,13 @@
                     <?php if ( is_front_page() && is_home() ) : ?>
                         <h1 class="site-title">
                             <a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" class="flex items-center">
-                                <img src="<?php echo NFU_THEME_URI . '/assets/images/nfu_logo.svg'; ?>" alt="<?php bloginfo( 'name' ); ?>" class="h-10 md:h-12">
+                                <img src="<?php echo NFU_THEME_URI . '/assets/images/nfu_logo.svg'; ?>" alt="<?php bloginfo( 'name' ); ?>" class="h-6 md:h-12">
                             </a>
                         </h1>
                     <?php else : ?>
                         <p class="site-title">
                             <a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home" class="flex items-center">
-                                <img src="<?php echo NFU_THEME_URI . '/assets/images/nfu_logo.svg'; ?>" alt="<?php bloginfo( 'name' ); ?>" class="h-10 md:h-12">
+                                <img src="<?php echo NFU_THEME_URI . '/assets/images/nfu_logo.svg'; ?>" alt="<?php bloginfo( 'name' ); ?>" class="h-6 md:h-12">
                             </a>
                         </p>
                     <?php endif; ?>

@@ -19,7 +19,7 @@ $empty_description = $empty_description ?? '管理画面でチャットデータ
 ?>
 
 <?php if (!empty($chat_messages)) : ?>
-    <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+    <div class="bg-white rounded-xl shadow-lg p-2 md:p-8 mb-8">
         <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
             <i class="<?php echo esc_attr($icon_class); ?> mr-3"></i>
             <?php echo esc_html($title); ?>
@@ -55,7 +55,7 @@ $empty_description = $empty_description ?? '管理画面でチャットデータ
             ?>
                 <div class="character-dialogue flex <?php echo $is_left ? 'flex-row' : 'flex-row-reverse'; ?> items-start">
                     <!-- キャラクターアイコン -->
-                    <div class="character-icon flex-shrink-0 w-16 h-16 bg-white rounded-full shadow-md flex items-center justify-center <?php echo $is_left ? 'mr-4' : 'ml-4'; ?> overflow-hidden">
+                    <div class="character-icon flex-shrink-0 w-8 h-8 md:w-16 md:h-16 bg-white rounded-full shadow-md flex items-center justify-center <?php echo $is_left ? 'mr-4' : 'ml-4'; ?> overflow-hidden">
                         <?php 
                         $professor_image = nfu_get_professor_image($speaker_id);
                         if ($professor_image) : ?>
